@@ -1,44 +1,70 @@
-# vCard - Personal portfolio
+# George Trajkov — Personal Master Portfolio
 
-![GitHub repo size](https://img.shields.io/github/repo-size/codewithsadee/vcard-personal-portfolio)
-![GitHub stars](https://img.shields.io/github/stars/codewithsadee/vcard-personal-portfolio?style=social)
-![GitHub forks](https://img.shields.io/github/forks/codewithsadee/vcard-personal-portfolio?style=social)
-[![Twitter Follow](https://img.shields.io/twitter/follow/codewithsadee_?style=social)](https://twitter.com/intent/follow?screen_name=codewithsadee_)
-[![YouTube Video Views](https://img.shields.io/youtube/views/SoxmIlgf2zM?style=social)](https://youtu.be/SoxmIlgf2zM)
+A premium, highly interactive multi-disciplinary portfolio website highlighting cross-border project management frameworks, data-driven creative strategy architectures, and modern front-end web development execution. Engineered with semantic structural clean-code optimization, responsive layouts, and unified hardware-accelerated interface motion.
 
-vCard is a fully responsive personal portfolio website, responsive for all devices, built using HTML, CSS, and JavaScript.
+## 🚀 Live Production Environment
+🔗 **Live View:** [https://gjore99.github.io/portfolio/](https://gjore99.github.io/portfolio/)
 
-## Demo
+---
 
-![vCard Desktop Demo](./website-demo-image/desktop.png "Desktop Demo")
-![vCard Mobile Demo](./website-demo-image/mobile.png "Mobile Demo")
+## 🛠️ Performance & Engineering Architecture
 
-## Prerequisites
+This portfolio drops heavy template bloat in favor of native frontend speed and layout balance. Key interface features include:
 
-Before you begin, ensure you have met the following requirements:
+*   **Kinetic Parallax Marquees:** Two high-performance horizontal infinite tickers drifting in opposite directions (Testimonials moving Left-to-Right, Tool Arsenal moving Right-to-Left) with automated pause-on-hover accessibility.
+*   **Unified Brand Iconography:** Deep integration of official platform brand shapes styled with a singular, responsive neon-cyan color grid matrix (`#19f7ff`) for clean scannability.
+*   **Serverless Data Routing:** Secure contact workflows integrated directly with masked form endpoints to capture and route submissions without exposing private email targets to scraping scripts.
+*   **Integrated CV Delivery Engine:** Clean, native client-side asset access tags providing instant one-click downloads of complete professional document histories.
+*   **3D Literary Case Showcases:** Multi-dimensional tracking grids breaking down authored behavioral development and cognitive paradox books into structured strategic pillars and exhibition milestones.
 
-* [Git](https://git-scm.com/downloads "Download Git") must be installed on your operating system.
+---
 
-## Installing vCard
+## 💼 Integrated Core Competency Tracks
 
-To install **vCard**, follow these steps:
+### 🚀 Technical Development
+*   **Languages & Tooling:** HTML5, CSS3, JavaScript (ES6+), TypeScript, Git Architecture
+*   **Frameworks & Runtimes:** React.js modules, Vite compilation engines, Tauri desktop shell structures
 
-Linux and macOS:
+### 📈 Growth & Performance Media
+*   **Platforms:** Meta Ads Manager, Google Ads ecosystem, Pinterest Analytics sourcing
+*   **Frameworks:** High-intent "traffic flipping" strategies, consumer buyer psychology layouts, Cashvertising (LF8) triggers
+
+### 🤝 Project & Operational Leadership
+*   **Methodologies:** Agile workflow mapping, daily standups, resource allocation, scope creep mitigation
+*   **Credentials:** European Union Youthpass certified tracks in Project Architecture and International Non-Formal Facilitation
+
+---
+
+## 📸 Interface Preview
+
+<div align="center">
+  <img src="website-demo-image/desktop.png" alt="Desktop View Interface Symmetrical Layout" width="100%" style="border-radius: 14px; margin-bottom: 15px; border: 1px solid #38383a;" />
+  <br />
+  <img src="website-demo-image/mobile.png" alt="Mobile View Interface Responsive Fluidity" width="45%" style="border-radius: 14px; border: 1px solid #38383a;" />
+</div>
+
+---
+
+## 📥 Local Installation & Verification
+
+To review the project assets or run the production files locally on your system:
+
+1. Clone the repository down into your environment:
 
 ```bash
-sudo git clone https://github.com/codewithsadee/vcard-personal-portfolio.git
+git clone https://github.com/Gjore99/portfolio.git
 ```
 
-Windows:
+2. Navigate into the target directory wrapper:
 
 ```bash
-git clone https://github.com/codewithsadee/vcard-personal-portfolio.git
+cd portfolio
 ```
 
-## Contact
+3. Launch via any local static file server or drop `index.html` directly into any modern web browser viewport.
 
-If you want to contact me you can reach me at [Twitter](https://www.x.com/codewithsadee_).
+---
 
-## License
+## 📄 License
 
 MIT
