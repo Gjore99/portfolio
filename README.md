@@ -35,16 +35,6 @@ This portfolio drops heavy template bloat in favor of native frontend speed and 
 
 ---
 
-## 📸 Interface Preview
-
-<div align="center">
-  <img src="website-demo-image/desktop.png" alt="Desktop View Interface Symmetrical Layout" width="100%" style="border-radius: 14px; margin-bottom: 15px; border: 1px solid #38383a;" />
-  <br />
-  <img src="website-demo-image/mobile.png" alt="Mobile View Interface Responsive Fluidity" width="45%" style="border-radius: 14px; border: 1px solid #38383a;" />
-</div>
-
----
-
 ## 📥 Local Installation & Verification
 
 To review the project assets or run the production files locally on your system:
