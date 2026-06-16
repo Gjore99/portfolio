@@ -1274,14 +1274,19 @@ main {
 
 .design-gallery {
   display: grid;
-  grid-template-columns: auto 1fr auto;
+  grid-template-columns: 1fr;
   align-items: center;
-  gap: 12px;
+  gap: 0;
   margin: 18px 0 22px;
+  position: relative;
 }
 
 .design-gallery-stage {
   position: relative;
+  width: 100%;
+  height: auto;
+  min-height: 0;
+  line-height: 0;
   border-radius: 14px;
   overflow: hidden;
   border: 1px solid hsla(183, 100%, 55%, 0.22);
@@ -1296,8 +1301,10 @@ main {
 .design-gallery-img {
   display: block;
   width: 100%;
-  max-height: min(52vh, 460px);
+  height: auto;
+  max-height: min(72vh, 680px);
   object-fit: contain;
+  object-position: center;
   background: hsl(240, 2%, 8%);
 }
 
@@ -1306,25 +1313,35 @@ main {
 }
 
 .design-gallery-nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 15;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 42px;
-  height: 42px;
-  border-radius: 12px;
-  background: hsla(183, 100%, 55%, 0.1);
-  border: 1px solid hsla(183, 100%, 55%, 0.28);
-  color: #19f7ff;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: rgba(32, 32, 34, 0.35);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #ffffff;
   font-size: 22px;
   transition: var(--transition-1);
   flex-shrink: 0;
 }
 
+.design-gallery-nav--prev { left: 12px; }
+
+.design-gallery-nav--next { right: 12px; }
+
 .design-gallery-nav:hover,
 .design-gallery-nav:focus-visible {
-  background: hsla(183, 100%, 55%, 0.22);
-  box-shadow: 0 0 20px rgba(25, 247, 255, 0.2);
-  transform: translateY(-1px);
+  background: rgba(32, 32, 34, 0.55);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+  transform: translateY(-50%);
 }
 
 .design-modal-body {
@@ -1392,18 +1409,8 @@ main {
  * #app-showcase-modal (Front-End Dev applications)
  */
 
-.credential-modal--app .design-gallery-stage {
-  aspect-ratio: 16 / 10;
-  min-height: 0;
-}
-
-.credential-modal--app .design-gallery-img {
-  width: 100%;
-  height: 100%;
-  max-height: none;
-  object-fit: contain;
-  object-position: center;
-  background: hsl(240, 2%, 8%);
+.credential-modal--app .design-gallery-placeholder {
+  min-height: 180px;
 }
 
 .design-gallery-placeholder {
@@ -3816,80 +3823,15 @@ textarea.form-input::-webkit-resizer { display: none; }
   }
 
   /**
-   * Man of Visuals / design-gallery (project image photos)
-   * Fix: arrows were taking layout space (grid side columns) which shrinks the photo.
-   * On mobile we switch to a single-column grid and absolutely overlay the nav buttons.
+   * Project galleries — mobile size cap only (layout matches desktop adaptive rules)
    */
-  .design-gallery {
-    grid-template-columns: 1fr !important;
-    gap: 0 !important;
-    margin: 18px 0 18px !important;
-    position: relative !important;
-  }
-
-  .design-gallery-stage {
-    width: 100% !important;
-    /* Default tall stage for any gallery not overridden below */
-    height: min(60vh, 420px) !important;
-    min-height: min(60vh, 420px) !important;
-  }
-
-  /* Man of Visuals + Front-End Dev: stage height follows the image */
-  .credential-modal--design .design-gallery-stage,
-  .credential-modal--app .design-gallery-stage {
-    aspect-ratio: auto !important;
-    height: auto !important;
-    min-height: 0 !important;
-    line-height: 0 !important;
-  }
-
   .credential-modal--design .design-gallery,
   .credential-modal--app .design-gallery {
     margin: 12px 0 14px !important;
   }
 
-  /* Border hugs image; full photo visible (zoom out, no letterbox bars) */
   .credential-modal--design .design-gallery-img,
   .credential-modal--app .design-gallery-img {
-    display: block !important;
-    width: 100% !important;
-    height: auto !important;
     max-height: min(58vh, 520px) !important;
-    object-fit: contain !important;
-    object-position: center !important;
-    border-radius: 14px !important;
-    background: hsl(240, 2%, 8%) !important;
-  }
-
-  .design-gallery-img {
-    max-height: calc(100vh - 220px) !important;
-    height: 100% !important;
-    width: 100% !important;
-    object-fit: cover !important; /* fill the rectangle so we don't show letterbox bars */
-    object-position: center !important;
-    border-radius: 14px !important;
-  }
-
-  .design-gallery-nav {
-    position: absolute !important;
-    top: 50% !important;
-    transform: translateY(-50%) !important;
-    background: rgba(32, 32, 34, 0.35) !important;
-    backdrop-filter: blur(4px) !important;
-    -webkit-backdrop-filter: blur(4px) !important;
-    border: 1px solid rgba(255, 255, 255, 0.12) !important;
-    color: #ffffff !important;
-    width: 44px !important;
-    height: 44px !important;
-    border-radius: 50% !important;
-    z-index: 15 !important;
-  }
-
-  .design-gallery-nav--prev {
-    left: 12px !important;
-  }
-
-  .design-gallery-nav--next {
-    right: 12px !important;
   }
 }
