@@ -1,0 +1,1395 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>George Trajkov — Portfolio</title>
+
+  <!--
+    - favicon
+  -->
+  <link rel="shortcut icon" href="./assets/images/logo.ico" type="image/x-icon">
+
+  <!--
+    - custom css link
+  -->
+  <link rel="stylesheet" href="./assets/css/style.css">
+
+  <!--
+    - google font link
+  -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://drive.google.com">
+  <link rel="dns-prefetch" href="https://drive.google.com">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+  <!--
+    - HEIC to JPEG conversion (iPhone photos)
+  -->
+  <script src="https://cdn.jsdelivr.net/npm/heic2any@0.0.4/dist/heic2any.min.js"></script>
+</head>
+
+<body>
+
+  <!--
+    - #MAIN
+  -->
+
+  <main>
+
+    <!--
+      - #SIDEBAR
+    -->
+
+    <aside class="sidebar" data-sidebar>
+
+      <div class="sidebar-info">
+
+        <figure class="avatar-box">
+          <img src="./assets/images/george-avatar.png" alt="George Trajkov" width="80" height="80">
+        </figure>
+
+        <div class="info-content">
+          <h1 class="name" title="George Trajkov">George Trajkov</h1>
+
+          <p class="title">Creative Strategist / Project Manager</p>
+        </div>
+
+        <button class="info_more-btn" data-sidebar-btn>
+          <span>Show Contacts</span>
+
+          <ion-icon name="chevron-down"></ion-icon>
+        </button>
+
+      </div>
+
+      <div class="sidebar-info_more">
+
+        <div class="separator"></div>
+
+        <ul class="contacts-list">
+
+          <li class="contact-item">
+
+            <div class="icon-box">
+              <ion-icon name="mail-outline"></ion-icon>
+            </div>
+
+            <div class="contact-info">
+              <p class="contact-title">Email</p>
+
+              <a href="mailto:manofvisual@gmail.com" class="contact-link">manofvisual@gmail.com</a>
+            </div>
+
+          </li>
+
+          <li class="contact-item">
+
+            <div class="icon-box">
+              <ion-icon name="phone-portrait-outline"></ion-icon>
+            </div>
+
+            <div class="contact-info">
+              <p class="contact-title">Phone</p>
+
+              <a href="tel:+38974233709" class="contact-link">+389 74 233 709</a>
+            </div>
+
+          </li>
+
+          <li class="contact-item">
+
+            <div class="icon-box">
+              <ion-icon name="calendar-outline"></ion-icon>
+            </div>
+
+            <div class="contact-info">
+              <p class="contact-title">Birthday</p>
+
+              <time datetime="2006-01-21">January 21st, 2006</time>
+            </div>
+
+          </li>
+
+          <li class="contact-item">
+
+            <div class="icon-box">
+              <ion-icon name="location-outline"></ion-icon>
+            </div>
+
+            <div class="contact-info">
+              <p class="contact-title">Location</p>
+
+              <address>Skopje, North Macedonia</address>
+            </div>
+
+          </li>
+
+        </ul>
+
+        <div class="separator"></div>
+
+        <ul class="social-list">
+
+          <li class="social-item">
+            <a
+              href="https://www.linkedin.com/public-profile/settings/?trk=d_flagship3_profile_self_view_public_profile&lipi=urn%3Ali%3Apage%3Ad_flagship3_profile_view_base%3BtdZrMwKlQS6m%2BrLyt%2BZlvA%3D%3D"
+              class="social-link"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="LinkedIn"
+            >
+              <ion-icon name="logo-linkedin"></ion-icon>
+            </a>
+          </li>
+
+          <li class="social-item">
+            <a
+              href="https://www.upwork.com/freelancers/~01476d90f7865645f3?mp_source=share"
+              class="social-link social-link--upwork"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Upwork"
+            >
+              <img
+                src="./assets/images/icon-upwork.png"
+                alt=""
+                class="upwork-icon"
+                width="40"
+                height="40"
+              >
+            </a>
+          </li>
+
+          <li class="social-item">
+            <a
+              href="https://www.instagram.com/man.of.visuals/"
+              class="social-link"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Instagram"
+            >
+              <ion-icon name="logo-instagram"></ion-icon>
+            </a>
+          </li>
+
+        </ul>
+
+      </div>
+
+    </aside>
+
+
+
+
+
+    <!--
+      - #main-content
+    -->
+
+    <div class="main-content">
+
+      <!--
+        - #NAVBAR
+      -->
+
+      <nav class="navbar">
+
+        <ul class="navbar-list">
+
+          <li class="navbar-item">
+            <button class="navbar-link  active" data-nav-link>About</button>
+          </li>
+
+          <li class="navbar-item">
+            <button class="navbar-link" data-nav-link>Resume</button>
+          </li>
+
+          <li class="navbar-item">
+            <button class="navbar-link" data-nav-link>Portfolio</button>
+          </li>
+
+          <li class="navbar-item">
+            <button class="navbar-link" data-nav-link>Book Author</button>
+          </li>
+
+          <li class="navbar-item">
+            <button class="navbar-link" data-nav-link>Contact</button>
+          </li>
+
+        </ul>
+
+      </nav>
+
+
+
+
+
+      <!--
+        - #ABOUT
+      -->
+
+      <article class="about  active" data-page="about">
+
+        <header>
+          <h2 class="h2 article-title">About</h2>
+        </header>
+
+        <section class="about-text">
+          <p>
+            I am a multi-disciplinary Project Manager, Creative Strategist, and Front-End Developer operating at the intersection of data-driven human psychology, behavioral marketing, and client-side software architecture. I specialize in leading international youth initiatives, building optimized standalone desktop applications with React and Tauri, and engineering high-volume ad creative funnels that scale.
+          </p>
+
+          <p>
+            Whether tracking complex international project milestones, writing books on behavioral control frameworks, or scripting scroll-stopping video hooks using advanced consumer analytics, my approach is rooted in execution, structural organization, and absolute precision.
+          </p>
+        </section>
+
+
+        <!--
+          - service
+        -->
+
+        <section class="service">
+
+          <h3 class="h3 service-title">What I'm doing</h3>
+
+          <ul class="service-list">
+
+            <li class="service-item">
+
+              <div class="service-icon-box">
+                <img src="./assets/images/icon-design.svg
+                " alt="design icon" width="40">
+              </div>
+
+              <div class="service-content-box">
+                <h4 class="h4 service-item-title">Graphic Design</h4>
+
+                <p class="service-item-text">
+                  Visuals that are less “pretty” and more “profit-churning”. Creative that makes people stop scrolling.
+                </p>
+              </div>
+
+            </li>
+
+            <li class="service-item">
+
+              <div class="service-icon-box">
+                <img src="./assets/images/icon-dev.svg" alt="Web development icon" width="40">
+              </div>
+
+              <div class="service-content-box">
+                <h4 class="h4 service-item-title">Front-End Development</h4>
+
+                <p class="service-item-text">
+                  React, TypeScript, JavaScript, Tailwind — building clean, responsive experiences end to end.
+                </p>
+              </div>
+
+            </li>
+
+            <li class="service-item">
+
+              <div class="service-icon-box">
+                <img src="./assets/images/icon-app.svg" alt="mobile app icon" width="40">
+              </div>
+
+              <div class="service-content-box">
+                <h4 class="h4 service-item-title">Brand Design</h4>
+
+                <p class="service-item-text">
+                  Crafting brand identities so addictive, they start cults. Logos? Visuals? Scroll-stopping vibes.
+                </p>
+              </div>
+
+            </li>
+
+            <li class="service-item">
+
+              <div class="service-icon-box">
+                <img src="./assets/images/icon-photo.svg" alt="camera icon" width="40">
+              </div>
+
+              <div class="service-content-box">
+                <h4 class="h4 service-item-title">Project Management</h4>
+
+                <p class="service-item-text">
+                  Project lifecycle management, team coordination, and process optimization to ship outcomes.
+                </p>
+              </div>
+
+            </li>
+
+          </ul>
+
+        </section>
+
+
+        <!--
+          - testimonials
+        -->
+
+        <section class="testimonials">
+
+          <h3 class="h3 testimonials-title">Testimonials</h3>
+
+          <div class="marquee-wrapper testimonials-marquee">
+            <ul class="testimonials-list marquee-content">
+
+            <li class="testimonials-item">
+              <div class="content-card" data-testimonials-item>
+
+                <figure class="testimonials-avatar-box">
+                  <img src="./assets/images/avatar-1.png" alt="Marcus Vance" width="60" data-testimonials-avatar>
+                </figure>
+
+                <h4 class="h4 testimonials-item-title" data-testimonials-title>Marcus Vance</h4>
+
+                <p class="testimonials-item-subtitle" data-testimonials-subtitle>Director of Growth Marketing</p>
+
+                <div class="testimonials-text" data-testimonials-text>
+                  <p>
+                    George completely revolutionized our creative testing cycles. By deploying his Pinterest sourcing method and mapping out deep consumer psychology triggers, our team unlocked hooks that aggressively cut our Meta acquisition costs while scaling spend safely.
+                  </p>
+                </div>
+
+              </div>
+            </li>
+
+            <li class="testimonials-item">
+              <div class="content-card" data-testimonials-item>
+
+                <figure class="testimonials-avatar-box">
+                  <img src="./assets/images/avatar-2.png" alt="Sophia Jenkins" width="60" data-testimonials-avatar>
+                </figure>
+
+                <h4 class="h4 testimonials-item-title" data-testimonials-title>Sophia Jenkins</h4>
+
+                <p class="testimonials-item-subtitle" data-testimonials-subtitle>Principal Product Engineer</p>
+
+                <div class="testimonials-text" data-testimonials-text>
+                  <p>
+                    George possesses a rare, powerful combination of native design intuition and structured engineering discipline. He built out optimized frontend modules in React and Vite that managed complex client-side binary data streams with flawless layout symmetry.
+                  </p>
+                </div>
+
+              </div>
+            </li>
+
+            <li class="testimonials-item">
+              <div class="content-card" data-testimonials-item>
+
+                <figure class="testimonials-avatar-box">
+                  <img src="./assets/images/avatar-3.png" alt="Elena Rostova" width="60" data-testimonials-avatar>
+                </figure>
+
+                <h4 class="h4 testimonials-item-title" data-testimonials-title>Elena Rostova</h4>
+
+                <p class="testimonials-item-subtitle" data-testimonials-subtitle>International Program Director</p>
+
+                <div class="testimonials-text" data-testimonials-text>
+                  <p>
+                    An exceptional operational coordinator and visual asset creator. George handled our cross-border logistics and daily standups flawlessly while taking total ownership of our multi-platform digital designs and community engagement grids.
+                  </p>
+                </div>
+
+              </div>
+            </li>
+
+            <li class="testimonials-item">
+              <div class="content-card" data-testimonials-item>
+
+                <figure class="testimonials-avatar-box">
+                  <img src="./assets/images/avatar-4.png" alt="Liam H. O'Connor" width="60" data-testimonials-avatar>
+                </figure>
+
+                <h4 class="h4 testimonials-item-title" data-testimonials-title>Liam H. O&apos;Connor</h4>
+
+                <p class="testimonials-item-subtitle" data-testimonials-subtitle>Creative Director</p>
+
+                <div class="testimonials-text" data-testimonials-text>
+                  <p>
+                    George doesn&apos;t just design beautiful interfaces; he designs for human behavior. His deep understanding of attention hooks, behavioral control layouts, and narrative architecture makes him an elite asset to any data-driven team.
+                  </p>
+                </div>
+
+              </div>
+            </li>
+
+            <li class="testimonials-item" aria-hidden="true">
+              <div class="content-card" data-testimonials-item>
+
+                <figure class="testimonials-avatar-box">
+                  <img src="./assets/images/avatar-1.png" alt="" width="60" data-testimonials-avatar>
+                </figure>
+
+                <h4 class="h4 testimonials-item-title" data-testimonials-title>Marcus Vance</h4>
+
+                <p class="testimonials-item-subtitle" data-testimonials-subtitle>Director of Growth Marketing</p>
+
+                <div class="testimonials-text" data-testimonials-text>
+                  <p>
+                    George completely revolutionized our creative testing cycles. By deploying his Pinterest sourcing method and mapping out deep consumer psychology triggers, our team unlocked hooks that aggressively cut our Meta acquisition costs while scaling spend safely.
+                  </p>
+                </div>
+
+              </div>
+            </li>
+
+            <li class="testimonials-item" aria-hidden="true">
+              <div class="content-card" data-testimonials-item>
+
+                <figure class="testimonials-avatar-box">
+                  <img src="./assets/images/avatar-2.png" alt="" width="60" data-testimonials-avatar>
+                </figure>
+
+                <h4 class="h4 testimonials-item-title" data-testimonials-title>Sophia Jenkins</h4>
+
+                <p class="testimonials-item-subtitle" data-testimonials-subtitle>Principal Product Engineer</p>
+
+                <div class="testimonials-text" data-testimonials-text>
+                  <p>
+                    George possesses a rare, powerful combination of native design intuition and structured engineering discipline. He built out optimized frontend modules in React and Vite that managed complex client-side binary data streams with flawless layout symmetry.
+                  </p>
+                </div>
+
+              </div>
+            </li>
+
+            <li class="testimonials-item" aria-hidden="true">
+              <div class="content-card" data-testimonials-item>
+
+                <figure class="testimonials-avatar-box">
+                  <img src="./assets/images/avatar-3.png" alt="" width="60" data-testimonials-avatar>
+                </figure>
+
+                <h4 class="h4 testimonials-item-title" data-testimonials-title>Elena Rostova</h4>
+
+                <p class="testimonials-item-subtitle" data-testimonials-subtitle>International Program Director</p>
+
+                <div class="testimonials-text" data-testimonials-text>
+                  <p>
+                    An exceptional operational coordinator and visual asset creator. George handled our cross-border logistics and daily standups flawlessly while taking total ownership of our multi-platform digital designs and community engagement grids.
+                  </p>
+                </div>
+
+              </div>
+            </li>
+
+            <li class="testimonials-item" aria-hidden="true">
+              <div class="content-card" data-testimonials-item>
+
+                <figure class="testimonials-avatar-box">
+                  <img src="./assets/images/avatar-4.png" alt="" width="60" data-testimonials-avatar>
+                </figure>
+
+                <h4 class="h4 testimonials-item-title" data-testimonials-title>Liam H. O&apos;Connor</h4>
+
+                <p class="testimonials-item-subtitle" data-testimonials-subtitle>Creative Director</p>
+
+                <div class="testimonials-text" data-testimonials-text>
+                  <p>
+                    George doesn&apos;t just design beautiful interfaces; he designs for human behavior. His deep understanding of attention hooks, behavioral control layouts, and narrative architecture makes him an elite asset to any data-driven team.
+                  </p>
+                </div>
+
+              </div>
+            </li>
+
+            </ul>
+          </div>
+
+        </section>
+
+
+        <!--
+          - testimonials modal
+        -->
+
+        <div class="modal-container" data-modal-container>
+
+          <div class="overlay" data-overlay></div>
+
+          <section class="testimonials-modal">
+
+            <button class="modal-close-btn" data-modal-close-btn>
+              <ion-icon name="close-outline"></ion-icon>
+            </button>
+
+            <div class="modal-img-wrapper">
+              <figure class="modal-avatar-box">
+                <img src="./assets/images/avatar-1.png" alt="Jim Rohn" width="80" data-modal-img>
+              </figure>
+
+              <img src="./assets/images/icon-quote.svg" alt="quote icon">
+            </div>
+
+            <div class="modal-content">
+
+              <h4 class="h3 modal-title" data-modal-title>Jim Rohn</h4>
+
+              <p class="modal-subtitle" data-modal-subtitle>Director of Growth Marketing</p>
+
+              <div data-modal-text>
+                <p>
+                  Richard was hired to create a corporate identity. We were very pleased with the work done. She has a
+                  lot of experience
+                  and is very concerned about the needs of client. Lorem ipsum dolor sit amet, ullamcous cididt
+                  consectetur adipiscing
+                  elit, seds do et eiusmod tempor incididunt ut laborels dolore magnarels alia.
+                </p>
+              </div>
+
+            </div>
+
+          </section>
+
+        </div>
+
+
+        <!--
+          - arsenal
+        -->
+
+        <section class="arsenal">
+          <h3 class="h3 arsenal-title">Tool Arsenal</h3>
+
+          <div class="marquee-wrapper arsenal-marquee">
+            <div class="marquee-content">
+              <div class="arsenal-icon-box"><ion-icon name="logo-react" aria-hidden="true"></ion-icon><span>React.js</span></div>
+              <div class="arsenal-icon-box">
+                <svg class="arsenal-brand-svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M6.915 4.03c-1.968 0-3.683 1.28-4.871 3.113C.704 9.208 0 11.883 0 14.449c0 .706.07 1.369.21 1.973a6.624 6.624 0 0 0 .265.86 5.297 5.297 0 0 0 .371.761c.696 1.159 1.818 1.927 3.593 1.927 1.497 0 2.846-.536 3.87-1.442-.3 2.353-1.122 3.893-2.67 4.44-1.002.32-2.044.45-3.004.45v1.062c1.32-.027 2.455-.195 3.433-.5 1.713-.496 2.891-1.555 3.593-3.199.48-1.155.778-2.52.839-4.062.437.548.988 1 1.609 1.343 1.061.594 2.376.949 3.875.949 1.775 0 2.898-.768 3.593-1.927a5.3 5.3 0 0 0 .372-.76c.102-.28.19-.578.265-.861.14-.604.21-1.267.21-1.974 0-2.565-.704-5.24-2.043-7.306-1.19-1.834-2.905-3.113-4.873-3.113-1.497 0-2.846.536-3.87 1.442.3-2.353 1.122-3.893 2.67-4.44 1.002-.32 2.044-.45 3.004-.45V4.068c-1.32.027-2.455.195-3.433.5-1.713.496-2.891 1.555-3.593 3.199a8.24 8.24 0 0 0-.839 4.062 5.066 5.066 0 0 0-.372-.067 5.11 5.11 0 0 0-3.004 1.062 5.12 5.12 0 0 0-1.87 1.442c-1.19 1.833-2.905 3.113-4.873 3.113zm7.515 7.617h-.006a3.9 3.9 0 0 1-.745-.08 2.853 2.853 0 0 1-1.143-.494 2.73 2.73 0 0 1-.954-1.087 2.956 2.956 0 0 1-.19-1.143c0-.431.082-.847.248-1.241.165-.395.41-.748.727-1.036a3.124 3.124 0 0 1 1.087-.68 3.78 3.78 0 0 1 1.306-.223c.48 0 .939.074 1.366.223a3.006 3.006 0 0 1 1.087.68c.317.288.562.641.727 1.036.166.394.248.81.248 1.241 0 .395-.063.776-.19 1.143a2.73 2.73 0 0 1-.954 1.087 2.853 2.853 0 0 1-1.143.494 3.9 3.9 0 0 1-.739.08z"/></svg>
+                <span>Meta Ads Manager</span>
+              </div>
+              <div class="arsenal-icon-box"><ion-icon name="logo-github" aria-hidden="true"></ion-icon><span>Git Architecture</span></div>
+              <div class="arsenal-icon-box"><ion-icon name="logo-figma" aria-hidden="true"></ion-icon><span>Figma</span></div>
+              <div class="arsenal-icon-box"><ion-icon name="flash-outline" aria-hidden="true"></ion-icon><span>Vite Runtime</span></div>
+              <div class="arsenal-icon-box"><ion-icon name="logo-google" aria-hidden="true"></ion-icon><span>Google Ads</span></div>
+              <div class="arsenal-icon-box"><ion-icon name="cube-outline" aria-hidden="true"></ion-icon><span>Tauri Shells</span></div>
+              <div class="arsenal-icon-box"><span class="arsenal-adobe-badge" aria-hidden="true">Ps</span><span>Photoshop</span></div>
+              <div class="arsenal-icon-box"><ion-icon name="sparkles-outline" aria-hidden="true"></ion-icon><span>Claude Code</span></div>
+              <div class="arsenal-icon-box"><ion-icon name="logo-pinterest" aria-hidden="true"></ion-icon><span>Pinterest Method</span></div>
+              <div class="arsenal-icon-box"><ion-icon name="logo-html5" aria-hidden="true"></ion-icon><span>HTML</span></div>
+              <div class="arsenal-icon-box"><span class="arsenal-adobe-badge" aria-hidden="true">Ai</span><span>Illustrator</span></div>
+              <div class="arsenal-icon-box"><ion-icon name="logo-css3" aria-hidden="true"></ion-icon><span>CSS</span></div>
+              <div class="arsenal-icon-box"><ion-icon name="funnel-outline" aria-hidden="true"></ion-icon><span>Traffic Flipping</span></div>
+              <div class="arsenal-icon-box"><ion-icon name="globe-outline" aria-hidden="true"></ion-icon><span>ESC Architecture</span></div>
+              <div class="arsenal-icon-box"><span class="arsenal-adobe-badge" aria-hidden="true">Id</span><span>InDesign</span></div>
+
+              <div class="arsenal-icon-box" aria-hidden="true"><ion-icon name="logo-react" aria-hidden="true"></ion-icon><span>React.js</span></div>
+              <div class="arsenal-icon-box" aria-hidden="true">
+                <svg class="arsenal-brand-svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M6.915 4.03c-1.968 0-3.683 1.28-4.871 3.113C.704 9.208 0 11.883 0 14.449c0 .706.07 1.369.21 1.973a6.624 6.624 0 0 0 .265.86 5.297 5.297 0 0 0 .371.761c.696 1.159 1.818 1.927 3.593 1.927 1.497 0 2.846-.536 3.87-1.442-.3 2.353-1.122 3.893-2.67 4.44-1.002.32-2.044.45-3.004.45v1.062c1.32-.027 2.455-.195 3.433-.5 1.713-.496 2.891-1.555 3.593-3.199.48-1.155.778-2.52.839-4.062.437.548.988 1 1.609 1.343 1.061.594 2.376.949 3.875.949 1.775 0 2.898-.768 3.593-1.927a5.3 5.3 0 0 0 .372-.76c.102-.28.19-.578.265-.861.14-.604.21-1.267.21-1.974 0-2.565-.704-5.24-2.043-7.306-1.19-1.834-2.905-3.113-4.873-3.113-1.497 0-2.846.536-3.87 1.442.3-2.353 1.122-3.893 2.67-4.44 1.002-.32 2.044-.45 3.004-.45V4.068c-1.32.027-2.455.195-3.433.5-1.713.496-2.891 1.555-3.593 3.199a8.24 8.24 0 0 0-.839 4.062 5.066 5.066 0 0 0-.372-.067 5.11 5.11 0 0 0-3.004 1.062 5.12 5.12 0 0 0-1.87 1.442c-1.19 1.833-2.905 3.113-4.873 3.113zm7.515 7.617h-.006a3.9 3.9 0 0 1-.745-.08 2.853 2.853 0 0 1-1.143-.494 2.73 2.73 0 0 1-.954-1.087 2.956 2.956 0 0 1-.19-1.143c0-.431.082-.847.248-1.241.165-.395.41-.748.727-1.036a3.124 3.124 0 0 1 1.087-.68 3.78 3.78 0 0 1 1.306-.223c.48 0 .939.074 1.366.223a3.006 3.006 0 0 1 1.087.68c.317.288.562.641.727 1.036.166.394.248.81.248 1.241 0 .395-.063.776-.19 1.143a2.73 2.73 0 0 1-.954 1.087 2.853 2.853 0 0 1-1.143.494 3.9 3.9 0 0 1-.739.08z"/></svg>
+                <span>Meta Ads Manager</span>
+              </div>
+              <div class="arsenal-icon-box" aria-hidden="true"><ion-icon name="logo-github" aria-hidden="true"></ion-icon><span>Git Architecture</span></div>
+              <div class="arsenal-icon-box" aria-hidden="true"><ion-icon name="logo-figma" aria-hidden="true"></ion-icon><span>Figma</span></div>
+              <div class="arsenal-icon-box" aria-hidden="true"><ion-icon name="flash-outline" aria-hidden="true"></ion-icon><span>Vite Runtime</span></div>
+              <div class="arsenal-icon-box" aria-hidden="true"><ion-icon name="logo-google" aria-hidden="true"></ion-icon><span>Google Ads</span></div>
+              <div class="arsenal-icon-box" aria-hidden="true"><ion-icon name="cube-outline" aria-hidden="true"></ion-icon><span>Tauri Shells</span></div>
+              <div class="arsenal-icon-box" aria-hidden="true"><span class="arsenal-adobe-badge" aria-hidden="true">Ps</span><span>Photoshop</span></div>
+              <div class="arsenal-icon-box" aria-hidden="true"><ion-icon name="sparkles-outline" aria-hidden="true"></ion-icon><span>Claude Code</span></div>
+              <div class="arsenal-icon-box" aria-hidden="true"><ion-icon name="logo-pinterest" aria-hidden="true"></ion-icon><span>Pinterest Method</span></div>
+              <div class="arsenal-icon-box" aria-hidden="true"><ion-icon name="logo-html5" aria-hidden="true"></ion-icon><span>HTML</span></div>
+              <div class="arsenal-icon-box" aria-hidden="true"><span class="arsenal-adobe-badge" aria-hidden="true">Ai</span><span>Illustrator</span></div>
+              <div class="arsenal-icon-box" aria-hidden="true"><ion-icon name="logo-css3" aria-hidden="true"></ion-icon><span>CSS</span></div>
+              <div class="arsenal-icon-box" aria-hidden="true"><ion-icon name="funnel-outline" aria-hidden="true"></ion-icon><span>Traffic Flipping</span></div>
+              <div class="arsenal-icon-box" aria-hidden="true"><ion-icon name="globe-outline" aria-hidden="true"></ion-icon><span>ESC Architecture</span></div>
+              <div class="arsenal-icon-box" aria-hidden="true"><span class="arsenal-adobe-badge" aria-hidden="true">Id</span><span>InDesign</span></div>
+            </div>
+          </div>
+        </section>
+
+      </article>
+
+
+
+
+
+      <!--
+        - #RESUME
+      -->
+
+      <article class="resume" data-page="resume">
+
+        <header class="resume-header">
+          <h2 class="h2 article-title">Resume</h2>
+          <a href="./assets/George_Trajkov_Resume.pdf" download="George_Trajkov_Resume.pdf" class="download-cv-btn">
+            <ion-icon name="download-outline" aria-hidden="true"></ion-icon>
+            <span>Download CV</span>
+          </a>
+        </header>
+
+        <section class="timeline">
+
+          <div class="title-wrapper">
+            <div class="icon-box">
+              <ion-icon name="briefcase-outline"></ion-icon>
+            </div>
+
+            <h3 class="h3">Professional Experience</h3>
+          </div>
+
+          <ol class="timeline-list">
+
+            <li class="timeline-item">
+
+              <h4 class="h4 timeline-item-title">Social Media Creative Strategist</h4>
+
+              <span>Ventrix Media (Google Partner Agency) | 02/2025 — 06/2025</span>
+
+              <ul class="timeline-text timeline-text-list">
+                <li>
+                  Engineered high-retention performance creative ad assets by deploying a proprietary &quot;Pinterest Method&quot; to isolate viral visual trends, mapping consumer buyer psychology (Life Force 8 / Cashvertising triggers) into high-CTR, scroll-stopping video hooks.
+                </li>
+                <li>
+                  Formulated high-yield &quot;traffic flipping&quot; creative strategies, designing native, content-first ad variations that successfully captured cheap, high-intent digital traffic to flip into high-revenue landing matrices.
+                </li>
+                <li>
+                  Facilitated rapid asset iteration loops with video editors and media buyers to enforce strict platform compliance rules (protecting accounts against bans), driving over 160,000 targeted clicks and generating €20,000+ in revenue within a 2-month period.
+                </li>
+              </ul>
+
+            </li>
+
+            <li class="timeline-item">
+
+              <h4 class="h4 timeline-item-title">Freelance Project Lead &amp; Branding Specialist</h4>
+
+              <span>Various International Clients &amp; NGOs | 12/2023 — 01/2025</span>
+
+              <ul class="timeline-text timeline-text-list">
+                <li>
+                  Conceptualized and deployed end-to-end brand identity frameworks, logo architectures, and comprehensive social media design asset suites for international NGOs, corporate clients, and independent creative teams.
+                </li>
+                <li>
+                  Collaborated with decentralized networks of developers, freelancers, and agency teams to successfully scope and deliver high-fidelity graphic design campaigns, eliminating visual inconsistencies and preventing scope creep.
+                </li>
+                <li>
+                  Designed high-impact physical event art, tangible print assets, and tactile promotional collateral using foundational, non-synthetic vector illustration methods, ensuring premium print-ready asset distribution for regional events.
+                </li>
+              </ul>
+
+            </li>
+
+          </ol>
+
+        </section>
+
+        <section class="timeline">
+
+          <div class="title-wrapper">
+            <div class="icon-box">
+              <ion-icon name="heart-outline"></ion-icon>
+            </div>
+
+            <h3 class="h3">Volunteering &amp; Community Leadership</h3>
+          </div>
+
+          <ol class="timeline-list">
+
+            <li class="timeline-item">
+
+              <h4 class="h4 timeline-item-title">European Solidarity Corps (ESC) Operational Lead</h4>
+
+              <span>World Our Home (Rēzekne, Latvia) | 01/2026 — Present</span>
+
+              <ul class="timeline-text timeline-text-list">
+                <li>
+                  Structures, schedules, and facilitates international training courses (&quot;Youth Goals in Practice&quot;), managing cross-border stakeholder logistics, daily strategic standups, and rigorous EU non-formal educational compliance standards.
+                </li>
+                <li>
+                  Manages daily rich-media production pipelines, personally designing high-engagement community posters, social media grid layouts, and educational carousels to elevate the organization&apos;s cross-platform digital presence.
+                </li>
+                <li>
+                  Deployed and scaled the centralized &quot;Latvia ESC Volunteers&quot; communication matrix, while concurrently acting as an external creative consultant and co-facilitator headhunted by multiple regional municipal NGOs to coordinate city-wide civic activations.
+                </li>
+              </ul>
+
+            </li>
+
+            <li class="timeline-item">
+
+              <h4 class="h4 timeline-item-title">Live IT Systems &amp; Network Operations Volunteer</h4>
+
+              <span>European Youth Olympic Festival (EYOF Skopje) | 07/2025 — 07/2025</span>
+
+              <ul class="timeline-text timeline-text-list">
+                <li>
+                  Managed mission-critical, live-data injection software for the handball department tournament, processing match metrics in real time under zero-error constraints to feed stadium scoreboards, live TV broadcast graphics, and external web portals simultaneously.
+                </li>
+                <li>
+                  Spearheaded rapid network architecture deployment across athlete accommodations, initializing localized hardware routing matrices and troubleshooting internet infrastructure on-site.
+                </li>
+                <li>
+                  Coordinated communication bridges and technical setup protocols during high-level international athletic delegation briefings.
+                </li>
+              </ul>
+
+            </li>
+
+            <li class="timeline-item">
+
+              <h4 class="h4 timeline-item-title">Regional Competition Team Representative</h4>
+
+              <span>The Red Cross | 2022 — 2025</span>
+
+              <ul class="timeline-text timeline-text-list">
+                <li>
+                  Selected to command the official city-representative team in intensive regional emergency-response and first-aid operations championships, competing directly against other municipal divisions.
+                </li>
+                <li>
+                  Directed team coordination, task allocation, and operational logistics during simulated crisis environments, optimizing cross-functional response times under extreme competitive pressure.
+                </li>
+              </ul>
+
+            </li>
+
+          </ol>
+
+        </section>
+
+        <section class="timeline">
+
+          <div class="title-wrapper">
+            <div class="icon-box">
+              <ion-icon name="book-outline"></ion-icon>
+            </div>
+
+            <h3 class="h3">Education</h3>
+          </div>
+
+          <ol class="timeline-list">
+
+            <li class="timeline-item">
+
+              <h4 class="h4 timeline-item-title">Bachelor of Science in Business Administration</h4>
+
+              <span>University of the People (Online) | 10/2025 — 2029</span>
+
+              <p class="timeline-text">
+                Focus areas include Process Management, Business Communications, and Organizational Leadership frameworks.
+              </p>
+
+            </li>
+
+            <li class="timeline-item">
+
+              <h4 class="h4 timeline-item-title">Continuing Professional Education</h4>
+
+              <span>Self-Taught | 2021 — 2026</span>
+
+              <p class="timeline-text">
+                Completed specialized advanced coursework in Frontend Development, UX/UI Layout Design, and Performance Marketing Loops.
+              </p>
+
+            </li>
+
+          </ol>
+
+        </section>
+
+        <section class="skill">
+
+          <h3 class="h3 skills-title">My skills</h3>
+
+          <ul class="skills-list content-card">
+
+            <li class="skills-item">
+
+              <div class="title-wrapper">
+                <h5 class="h5">Performance Creative Strategy</h5>
+                <data value="95">95%</data>
+              </div>
+
+              <p class="skill-focus">Focus: Ad Hooks, Audience Psychology, Script Conversion Loops</p>
+
+              <div class="skill-progress-bg">
+                <div class="skill-progress-fill" style="width: 95%;"></div>
+              </div>
+
+            </li>
+
+            <li class="skills-item">
+
+              <div class="title-wrapper">
+                <h5 class="h5">React &amp; Front-End Architecture</h5>
+                <data value="90">90%</data>
+              </div>
+
+              <p class="skill-focus">Focus: Tauri Desktop Environments, TypeScript, Async API Processing</p>
+
+              <div class="skill-progress-bg">
+                <div class="skill-progress-fill" style="width: 90%;"></div>
+              </div>
+
+            </li>
+
+            <li class="skills-item">
+
+              <div class="title-wrapper">
+                <h5 class="h5">Project Management &amp; Agile Delivery</h5>
+                <data value="94">94%</data>
+              </div>
+
+              <p class="skill-focus">Focus: Cross-Border Logistical Scaling, Resource Management</p>
+
+              <div class="skill-progress-bg">
+                <div class="skill-progress-fill" style="width: 94%;"></div>
+              </div>
+
+            </li>
+
+            <li class="skills-item">
+
+              <div class="title-wrapper">
+                <h5 class="h5">Typography &amp; Brand Identity</h5>
+                <data value="95">95%</data>
+              </div>
+
+              <p class="skill-focus">Focus: Systemic Vector Geometry, Chromatic Tonal Mapping</p>
+
+              <div class="skill-progress-bg">
+                <div class="skill-progress-fill" style="width: 95%;"></div>
+              </div>
+
+            </li>
+
+          </ul>
+
+        </section>
+
+      </article>
+
+
+
+
+
+      <!--
+        - #PORTFOLIO
+      -->
+
+      <article class="portfolio" data-page="portfolio">
+
+        <header>
+          <h2 class="h2 article-title">Portfolio</h2>
+        </header>
+
+        <section class="projects">
+
+          <ul class="filter-list">
+
+            <li class="filter-item">
+              <button class="active" data-filter-btn="all">All</button>
+            </li>
+
+            <li class="filter-item">
+              <button data-filter-btn="creative-strategist">Creative Strategist</button>
+            </li>
+
+            <li class="filter-item">
+              <button data-filter-btn="project-management">Project Management</button>
+            </li>
+
+            <li class="filter-item">
+              <button data-filter-btn="front-end-dev">Front-End Dev</button>
+            </li>
+
+            <li class="filter-item">
+              <button data-filter-btn="man-of-visuals">The Man of Visuals</button>
+            </li>
+
+          </ul>
+
+          <div class="filter-select-box">
+
+            <button class="filter-select" data-select>
+
+              <div class="select-value" data-selecct-value>All</div>
+
+              <div class="select-icon">
+                <ion-icon name="chevron-down"></ion-icon>
+              </div>
+
+            </button>
+
+            <ul class="select-list">
+
+              <li class="select-item">
+                <button data-select-item data-select-value="all">All</button>
+              </li>
+
+              <li class="select-item">
+                <button data-select-item data-select-value="creative-strategist">Creative Strategist</button>
+              </li>
+
+              <li class="select-item">
+                <button data-select-item data-select-value="project-management">Project Management</button>
+              </li>
+
+              <li class="select-item">
+                <button data-select-item data-select-value="front-end-dev">Front-End Dev</button>
+              </li>
+
+              <li class="select-item">
+                <button data-select-item data-select-value="man-of-visuals">The Man of Visuals</button>
+              </li>
+
+            </ul>
+
+          </div>
+
+          <div class="creative-strategist-panel" data-creative-strategist-panel hidden>
+
+            <section class="cs-ugc-showcase" aria-label="UGC creative showcase loop">
+              <div class="cs-ugc-marquee" data-cs-ugc-marquee></div>
+            </section>
+
+            <section class="cs-editorial-stack" aria-label="Creative strategist case studies">
+
+              <article class="cs-editorial-row">
+                <div class="cs-editorial-row__copy">
+                  <h3 class="cs-editorial-title">Scale Case Study: $4.6M Total Account Revenue</h3>
+                  <p class="cs-editorial-subtitle">Cross-Functional Agency Team Project &bull; Meta &amp; Google Performance Strategy &bull; International Scale</p>
+                  <ul class="cs-editorial-points">
+                    <li><strong>Total Account Impact:</strong> The agency cross-functional team scaled total account revenue to $4.6M on a $2.6M spend within 6 months, slashing overall CPA from $63.58 to $27.52.</li>
+                    <li><strong>My Direct Contribution:</strong> Operated within the core Creative Strategist pod to translate high-level business targets into actionable visual assets. Personally wrote high-retention, scroll-stopping scripts and designed POV-style layout variations for YouTube and Facebook to aggressively combat audience ad fatigue.</li>
+                    <li class="cs-editorial-impact"><strong>Team &amp; Iteration Loops:</strong> Facilitated rapid feedback loops with video editors and performance managers to test, refine, and deploy winning iterations weekly, helping safely scale monthly ad allocations from $220K to $525K.</li>
+                  </ul>
+                </div>
+                <div class="cs-editorial-row__media">
+                  <video class="cs-passive-video cs-editorial-video" src="./assets/videos/creative-strategist/case-video-1.mp4" autoplay loop muted playsinline preload="auto" aria-hidden="true"></video>
+                </div>
+              </article>
+
+              <article class="cs-editorial-row">
+                <div class="cs-editorial-row__copy">
+                  <h3 class="cs-editorial-title">Optimization Case Study: $546K In Total Conversion Value</h3>
+                  <p class="cs-editorial-subtitle">Cross-Functional Agency Team Project &bull; Cost-Per-Acquisition Minimization</p>
+                  <ul class="cs-editorial-points">
+                    <li><strong>Total Account Impact:</strong> The strategic squad optimized the account ecosystem to secure $546K in conversion value from a $115K marketing spend over 4 months, driving a 192% monthly revenue growth spike.</li>
+                    <li><strong>My Direct Contribution:</strong> Owned the conceptual formatting and scripting of agile performance ad variations. Structured precise storyboards and visual hooks built strictly around the client&apos;s localized unit economics, margins, and target KPIs to maximize front-end click value.</li>
+                    <li class="cs-editorial-impact"><strong>Team &amp; Iteration Loops:</strong> Collaborated closely with media buyers to isolate data stagnation, introducing targeted creative variations that supported the team in driving baseline Meta CPA down from $37.41 to $22.12.</li>
+                  </ul>
+                </div>
+                <div class="cs-editorial-row__media">
+                  <video class="cs-passive-video cs-editorial-video" src="./assets/videos/creative-strategist/case-video-2.mp4" autoplay loop muted playsinline preload="auto" aria-hidden="true"></video>
+                </div>
+              </article>
+
+              <article class="cs-editorial-row">
+                <div class="cs-editorial-row__copy">
+                  <h3 class="cs-editorial-title">Velocity Case Study: $1.16M Team-Engineered Revenue Sprint</h3>
+                  <p class="cs-editorial-subtitle">Cross-Functional Agency Team Project &bull; Fractional Growth Operations &bull; Multi-Channel Iteration</p>
+                  <ul class="cs-editorial-points">
+                    <li><strong>Total Account Impact:</strong> Executed a high-velocity self-funded strategy generating $1.16M in revenue from a $346K spend in a 2-month sprint, multiplying ad allocation from $56K/mo to $173K/mo.</li>
+                    <li><strong>My Direct Contribution:</strong> Designed targeted traffic-flipping visual assets and raw script variants engineered to capture immediate audience attention. Analyzed daily creative performance charts to map drop-off points and pivot visual angles in real time.</li>
+                    <li class="cs-editorial-impact"><strong>Team &amp; Iteration Loops:</strong> Partnered with senior growth consultants and compliance officers to maintain absolute brand alignment while generating over 160,000 highly targeted clicks to the core funnels.</li>
+                  </ul>
+                </div>
+                <div class="cs-editorial-row__media">
+                  <video class="cs-passive-video cs-editorial-video" src="./assets/videos/creative-strategist/case-video-3.mp4" autoplay loop muted playsinline preload="auto" aria-hidden="true"></video>
+                </div>
+              </article>
+
+              <article class="cs-editorial-row">
+                <div class="cs-editorial-row__copy">
+                  <h3 class="cs-editorial-title">Expansion Case Study: $2.9M European Regional Scale</h3>
+                  <p class="cs-editorial-subtitle">Cross-Functional Agency Team Project &bull; Cross-Border Localization Systems</p>
+                  <ul class="cs-editorial-points">
+                    <li><strong>Total Account Impact:</strong> Achieved a $2.9M revenue milestone over 6 months by expanding the brand&apos;s digital presence into Southern Europe and the DACH region, boosting net Shopify revenue metrics by 166%.</li>
+                    <li><strong>My Direct Contribution:</strong> Analyzed cross-border asset performance variables to direct the localization formatting. Wrote tailored scripts optimized specifically for diverse regional demographics and consumer psychologies.</li>
+                    <li class="cs-editorial-impact"><strong>Team &amp; Iteration Loops:</strong> Coordinated with video editing pools and senior account managers to maintain an aggressive weekly asset deployment schedule, supporting the team infrastructure as safe monthly ad spend scaled from $60K to $150K.</li>
+                  </ul>
+                </div>
+                <div class="cs-editorial-row__media">
+                  <video class="cs-passive-video cs-editorial-video" src="./assets/videos/creative-strategist/case-video-4.mp4" autoplay loop muted playsinline preload="auto" aria-hidden="true"></video>
+                </div>
+              </article>
+
+            </section>
+
+          </div>
+
+          <ul class="project-list" data-project-list>
+
+            <li class="project-item active" data-filter-item data-category="man-of-visuals" data-project-modal-item>
+              <a href="#" data-project-modal-trigger>
+                <figure class="project-img">
+                  <div class="project-item-icon-box">
+                    <ion-icon name="eye-outline"></ion-icon>
+                  </div>
+                  <img src="./assets/images/project-verdelume/img-1.jpg" alt="Verdelume botanical beverage identity" loading="lazy">
+                </figure>
+                <div class="project-card-meta">
+                  <h3 class="project-title">Verdelume Botanical Beverage Identity</h3>
+                  <p class="project-category">Branding Work</p>
+                </div>
+              </a>
+
+              <div class="project-modal-data" hidden data-design-gallery="verdelume"></div>
+            </li>
+
+            <li class="project-item active" data-filter-item data-category="man-of-visuals" data-project-modal-item>
+              <a href="#" data-project-modal-trigger>
+                <figure class="project-img">
+                  <div class="project-item-icon-box">
+                    <ion-icon name="eye-outline"></ion-icon>
+                  </div>
+                  <img src="./assets/images/project-parabola/img-1.jpg" alt="Parabola sonic identity and apparel systems" loading="lazy">
+                </figure>
+                <div class="project-card-meta">
+                  <h3 class="project-title">Parabola Sonic Identity &amp; Apparel Systems</h3>
+                  <p class="project-category">Branding Work</p>
+                </div>
+              </a>
+
+              <div class="project-modal-data" hidden data-design-gallery="parabola"></div>
+            </li>
+
+            <li class="project-item active" data-filter-item data-category="man-of-visuals" data-project-modal-item>
+              <a href="#" data-project-modal-trigger>
+                <figure class="project-img">
+                  <div class="project-item-icon-box">
+                    <ion-icon name="eye-outline"></ion-icon>
+                  </div>
+                  <img src="./assets/images/project-verdevesta/img-1.jpg" alt="Verdevesta botanical brand identity" loading="lazy">
+                </figure>
+                <div class="project-card-meta">
+                  <h3 class="project-title">Verdevesta · Botanical Branding &amp; Retail Ecosystem</h3>
+                  <p class="project-category">Branding Work</p>
+                </div>
+              </a>
+
+              <div class="project-modal-data" hidden data-design-gallery="verdevesta"></div>
+            </li>
+
+            <li class="project-item active" data-filter-item data-category="man-of-visuals" data-project-modal-item>
+              <a href="#" data-project-modal-trigger>
+                <figure class="project-img">
+                  <div class="project-item-icon-box">
+                    <ion-icon name="eye-outline"></ion-icon>
+                  </div>
+                  <img src="./assets/images/project-blaze/img-1.jpg" alt="Blaze Trail visual identity" loading="lazy">
+                </figure>
+                <div class="project-card-meta">
+                  <h3 class="project-title">Blaze Trail Visual Identity System</h3>
+                  <p class="project-category">Branding Work</p>
+                </div>
+              </a>
+
+              <div class="project-modal-data" hidden data-design-gallery="blaze"></div>
+            </li>
+
+            <li class="project-item active" data-filter-item data-category="man-of-visuals" data-project-modal-item>
+              <a href="#" data-project-modal-trigger>
+                <figure class="project-img">
+                  <div class="project-item-icon-box">
+                    <ion-icon name="eye-outline"></ion-icon>
+                  </div>
+                  <img src="./assets/images/project-nexit/img-1.jpg" alt="NEXIT Construction Ltd brand identity" loading="lazy">
+                </figure>
+                <div class="project-card-meta">
+                  <h3 class="project-title">NEXIT Construction Ltd · Brand Identity</h3>
+                  <p class="project-category">Branding Work</p>
+                </div>
+              </a>
+
+              <div class="project-modal-data" hidden data-design-gallery="nexit"></div>
+            </li>
+
+            <li class="project-item active" data-filter-item data-category="man-of-visuals" data-project-modal-item>
+              <a href="#" data-project-modal-trigger>
+                <figure class="project-img">
+                  <div class="project-item-icon-box">
+                    <ion-icon name="eye-outline"></ion-icon>
+                  </div>
+                  <img src="./assets/images/project-thumbnail/img-1.avif" alt="High-CTR YouTube thumbnail portfolio preview" loading="lazy">
+                </figure>
+                <div class="project-card-meta">
+                  <h3 class="project-title">High-CTR YouTube Thumbnail Portfolio</h3>
+                  <p class="project-category">Thumbnails</p>
+                </div>
+              </a>
+
+              <div class="project-modal-data" hidden data-design-gallery="thumbnail"></div>
+            </li>
+
+            <li class="project-item active" data-filter-item data-category="man-of-visuals" data-project-modal-item>
+              <a href="#" data-project-modal-trigger>
+                <figure class="project-img">
+                  <div class="project-item-icon-box">
+                    <ion-icon name="eye-outline"></ion-icon>
+                  </div>
+                  <img src="./assets/images/project-china/img-1.jpg" alt="Mystic Serenity digital matte painting" loading="lazy">
+                </figure>
+                <div class="project-card-meta">
+                  <h3 class="project-title">Mystic Serenity — Digital Matte Painting</h3>
+                  <p class="project-category">Art</p>
+                </div>
+              </a>
+
+              <div class="project-modal-data" hidden data-design-gallery="china"></div>
+            </li>
+
+            <li class="project-item active" data-filter-item data-category="man-of-visuals" data-project-modal-item>
+              <a href="#" data-project-modal-trigger>
+                <figure class="project-img">
+                  <div class="project-item-icon-box">
+                    <ion-icon name="eye-outline"></ion-icon>
+                  </div>
+                  <img src="./assets/images/project-truck/img-1.jpg" alt="Sunset Chrome high-fidelity vehicle compositing" loading="lazy">
+                </figure>
+                <div class="project-card-meta">
+                  <h3 class="project-title">Sunset Chrome — High-Fidelity Vehicle Compositing</h3>
+                  <p class="project-category">Art</p>
+                </div>
+              </a>
+
+              <div class="project-modal-data" hidden data-design-gallery="truck"></div>
+            </li>
+
+            <li class="project-item active" data-filter-item data-category="man-of-visuals" data-project-modal-item>
+              <a href="#" data-project-modal-trigger>
+                <figure class="project-img">
+                  <div class="project-item-icon-box">
+                    <ion-icon name="eye-outline"></ion-icon>
+                  </div>
+                  <img src="./assets/images/project-sentinal/img-1.jpg" alt="The Sentinel advanced luminescent compositing" loading="lazy">
+                </figure>
+                <div class="project-card-meta">
+                  <h3 class="project-title">The Sentinel — Advanced Luminescent Compositing</h3>
+                  <p class="project-category">Art</p>
+                </div>
+              </a>
+
+              <div class="project-modal-data" hidden data-design-gallery="sentinel"></div>
+            </li>
+
+            <li class="project-item active" data-filter-item data-category="project-management" data-project-modal-item>
+              <a href="#" data-project-modal-trigger>
+                <figure class="project-img">
+                  <div class="project-item-icon-box">
+                    <ion-icon name="ribbon-outline"></ion-icon>
+                  </div>
+                  <div class="project-brand-thumb">
+                    <img src="./assets/images/youthpass-logo.png" alt="Youthpass collection" loading="lazy">
+                  </div>
+                </figure>
+                <div class="project-card-meta">
+                  <h3 class="project-title">Erasmus+ Professional Certifications</h3>
+                  <p class="project-category">International Management Archive</p>
+                </div>
+              </a>
+
+              <div class="project-modal-data" hidden data-credential-gallery="erasmus"></div>
+            </li>
+
+            <li class="project-item active" data-filter-item data-category="project-management" data-project-modal-item>
+              <a href="#" data-project-modal-trigger>
+                <figure class="project-img">
+                  <div class="project-item-icon-box">
+                    <ion-icon name="flag-outline"></ion-icon>
+                  </div>
+                  <div class="project-brand-thumb project-brand-thumb--esc">
+                    <img src="./assets/images/esc-logo.png" alt="European Solidarity Corps" loading="lazy">
+                  </div>
+                </figure>
+                <div class="project-card-meta">
+                  <h3 class="project-title">European Solidarity Corps (ESC) Operational Leadership</h3>
+                  <p class="project-category">Logistics &amp; Operations</p>
+                </div>
+              </a>
+
+              <div class="project-modal-data" hidden data-esc-showcase="esc"></div>
+            </li>
+
+            <li class="project-item active" data-filter-item data-category="front-end-dev" data-project-modal-item>
+              <a href="#" data-project-modal-trigger>
+                <figure class="project-img">
+                  <div class="project-item-icon-box">
+                    <ion-icon name="scan-outline"></ion-icon>
+                  </div>
+                  <img src="./assets/images/project-receipt-ai/photo-1.png" alt="AI-Powered Multi-Lingual Receipt Accountant" loading="lazy">
+                </figure>
+                <div class="project-card-meta">
+                  <h3 class="project-title">AI-Powered Multi-Lingual Receipt Accountant</h3>
+                  <p class="project-category">React / AI Integration / OCR</p>
+                </div>
+              </a>
+
+              <div class="project-modal-data" hidden data-app-showcase="receipt-ai"></div>
+            </li>
+
+            <li class="project-item active" data-filter-item data-category="front-end-dev" data-project-modal-item>
+              <a href="#" data-project-modal-trigger>
+                <figure class="project-img">
+                  <div class="project-item-icon-box">
+                    <ion-icon name="swap-horizontal-outline"></ion-icon>
+                  </div>
+                  <img src="./assets/images/project-converter/photo-1.png" alt="Universal Client-Side File Converter Engine" loading="lazy">
+                </figure>
+                <div class="project-card-meta">
+                  <h3 class="project-title">Universal Client-Side File Converter Engine</h3>
+                  <p class="project-category">React / Web APIs / File Processing</p>
+                </div>
+              </a>
+
+              <div class="project-modal-data" hidden data-app-showcase="converter"></div>
+            </li>
+
+            <li class="project-item active" data-filter-item data-category="front-end-dev" data-project-modal-item>
+              <a href="#" data-project-modal-trigger>
+                <figure class="project-img">
+                  <div class="project-item-icon-box">
+                    <ion-icon name="desktop-outline"></ion-icon>
+                  </div>
+                  <div class="project-placeholder project-placeholder--coming-soon">
+                    <span class="project-placeholder-label">Coming soon</span>
+                  </div>
+                </figure>
+                <div class="project-card-meta">
+                  <h3 class="project-title">Life Journal AI Desktop Client</h3>
+                  <p class="project-category">React / TypeScript / Tauri</p>
+                </div>
+              </a>
+
+              <div class="project-modal-data" hidden data-app-showcase="journal-ai"></div>
+            </li>
+
+          </ul>
+
+        </section>
+
+
+        <!--
+          - credential modal (Project Management cards)
+        -->
+
+        <div class="modal-container" data-credential-modal-container>
+
+          <div class="overlay" data-credential-overlay></div>
+
+          <section class="credential-modal">
+
+            <button class="modal-close-btn" data-credential-modal-close-btn aria-label="Close credential details">
+              <ion-icon name="close-outline"></ion-icon>
+            </button>
+
+            <div class="credential-modal-icon" aria-hidden="true">
+              <ion-icon name="ribbon-outline"></ion-icon>
+            </div>
+
+            <div class="credential-modal-content" data-credential-modal-content>
+              <!-- populated from .project-modal-data on card click -->
+            </div>
+
+          </section>
+
+        </div>
+
+      </article>
+
+
+
+
+
+      <!--
+        - #PUBLISHED AUTHOR (3-book interactive showcase)
+      -->
+
+      <article class="blog published-author" data-page="book author">
+
+        <header>
+          <h2 class="h2 article-title">Book Author</h2>
+        </header>
+
+        <section class="author-book-selector" aria-label="Select a published book">
+          <ul class="author-selector-list" data-author-selector></ul>
+        </section>
+
+        <div class="author-panel" data-author-panel>
+
+        <section class="author-feature" data-author-feature></section>
+
+        <section class="blog-posts author-works">
+          <ul class="blog-posts-list author-works-list" data-author-grid></ul>
+        </section>
+
+        </div>
+
+      </article>
+
+
+
+
+
+      <!--
+        - #CONTACT
+      -->
+
+      <article class="contact" data-page="contact">
+
+        <header>
+          <h2 class="h2 article-title">Contact</h2>
+        </header>
+
+        <section class="mapbox" data-mapbox>
+          <figure>
+            <iframe
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d47427.34586616428!2d21.4016413!3d41.9964147!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x135415a58c63cd11%3A0xaed7070eec874b26!2sSkopje%2C%20North%20Macedonia!5e0!3m2!1sen!2s!4v1718460000000!5m2!1sen!2s"
+              width="400" height="300" loading="lazy"></iframe>
+          </figure>
+        </section>
+
+        <section class="contact-form">
+
+          <h3 class="h3 form-title">Contact Form</h3>
+
+          <form action="https://formspree.io/f/xaqzvdyd" method="POST" class="form" data-form>
+
+            <div class="input-wrapper">
+              <input type="text" name="name" class="form-input" placeholder="Full name" required data-form-input>
+
+              <input type="email" name="email" class="form-input" placeholder="Email address" required data-form-input>
+            </div>
+
+            <textarea name="message" class="form-input" placeholder="Your Message" required data-form-input></textarea>
+
+            <button class="form-btn" type="submit" disabled data-form-btn>
+              <ion-icon name="paper-plane"></ion-icon>
+              <span>Send Message</span>
+            </button>
+
+          </form>
+
+        </section>
+
+      </article>
+
+    </div>
+
+  </main>
+
+
+
+
+
+
+  <!--
+    - custom js link
+  -->
+  <script src="./assets/js/script.js"></script>
+
+  <!--
+    - ionicon link
+  -->
+  <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+  <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+
+</body>
+
+</html>
