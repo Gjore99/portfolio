@@ -1663,16 +1663,30 @@ const projectList = document.querySelector("[data-project-list]");
 
 const CS_UGC_VIDEO_BASE = "./assets/videos/creative-strategist";
 const CS_UGC_VIDEO_COUNT = 22;
-const CS_UGC_MAX_PLAYING = 5;
+const CS_UGC_MAX_LOADING = 3;
+const CS_UGC_MAX_PLAYING = 4;
 const CS_UGC_MARQUEE_DURATION = 110;
 const CS_UGC_PRELOAD_SECONDS = 1;
+const CS_UGC_SYNC_MS = 180;
 
 const getCsUgcVideoSrc = function (index) {
   return `${CS_UGC_VIDEO_BASE}/ugc-loop-${index}.mp4`;
 };
 
 let csUgcPreloadTimer = null;
+let csUgcLoadQueue = [];
+let csUgcActiveLoads = 0;
 let csMediaSuspended = false;
+
+const getCsUgcLimits = function () {
+  const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+
+  if (connection && (connection.saveData || connection.effectiveType === "slow-2g" || connection.effectiveType === "2g")) {
+    return { maxLoading: 2, maxPlaying: 2 };
+  }
+
+  return { maxLoading: CS_UGC_MAX_LOADING, maxPlaying: CS_UGC_MAX_PLAYING };
+};
 
 const buildCsUgcFrameHtml = function (index) {
   return `
@@ -1696,6 +1710,7 @@ const bindCreativeStrategistVideoEvents = function (video) {
 
   const retryPlay = function () {
     if (csMediaSuspended || !creativeStrategistPanel || creativeStrategistPanel.hidden) { return; }
+    if (video.dataset.wantsPlay !== "true") { return; }
 
     video.muted = true;
     video.playsInline = true;
@@ -1715,27 +1730,132 @@ const bindCreativeStrategistVideoEvents = function (video) {
   });
 
   video.addEventListener("error", function () {
-    const source = video.dataset.ugcSrc || video.getAttribute("src");
+    const source = video.dataset.ugcSrc || video.dataset.csCaseSrc || video.getAttribute("src");
 
     if (!source) { return; }
 
+    video.dataset.ugcLoading = "false";
+    csUgcActiveLoads = Math.max(0, csUgcActiveLoads - 1);
     video.removeAttribute("src");
+    video.preload = "none";
     video.load();
-    video.src = source;
+    removeUgcLoadQueueItem(video);
+    processUgcLoadQueue();
+
+    window.setTimeout(function () {
+      if (!csMediaSuspended && video.dataset.wantsPlay === "true") {
+        requestUgcVideoLoad(video, 900);
+      }
+    }, 600);
   });
+};
+
+const getCreativeStrategistVideoSource = function (video) {
+  return video.dataset.ugcSrc || video.dataset.csCaseSrc || video.getAttribute("src") || "";
+};
+
+const removeUgcLoadQueueItem = function (video) {
+  csUgcLoadQueue = csUgcLoadQueue.filter(function (item) {
+    return item.video !== video;
+  });
+  video.dataset.ugcQueued = "false";
+};
+
+const markUgcVideoReady = function (video) {
+  if (!video || video.dataset.ugcLoading !== "true") { return; }
+
+  video.dataset.ugcLoading = "false";
+  csUgcActiveLoads = Math.max(0, csUgcActiveLoads - 1);
+  processUgcLoadQueue();
+
+  if (video.dataset.wantsPlay === "true") {
+    playCreativeStrategistVideo(video);
+  }
+};
+
+const startUgcVideoLoad = function (video) {
+  const source = getCreativeStrategistVideoSource(video);
+
+  if (!video || !source || video.getAttribute("src") || video.dataset.ugcLoading === "true") { return; }
+
+  const limits = getCsUgcLimits();
+
+  if (csUgcActiveLoads >= limits.maxLoading) { return; }
+
+  csUgcActiveLoads += 1;
+  video.dataset.ugcLoading = "true";
+  video.dataset.ugcQueued = "false";
+  bindCreativeStrategistVideoEvents(video);
+
+  const onReady = function () {
+    video.removeEventListener("loadeddata", onReady);
+    video.removeEventListener("canplay", onReady);
+    markUgcVideoReady(video);
+  };
+
+  video.addEventListener("loadeddata", onReady);
+  video.addEventListener("canplay", onReady);
+  video.preload = "auto";
+  video.src = source;
+
+  if (video.readyState >= 2) {
+    window.requestAnimationFrame(onReady);
+  }
+};
+
+const processUgcLoadQueue = function () {
+  const limits = getCsUgcLimits();
+
+  csUgcLoadQueue.sort(function (a, b) {
+    return b.priority - a.priority;
+  });
+
+  while (csUgcActiveLoads < limits.maxLoading && csUgcLoadQueue.length) {
+    const item = csUgcLoadQueue.shift();
+
+    if (!item || !item.video || !item.video.isConnected) { continue; }
+
+    if (item.video.getAttribute("src") || item.video.dataset.ugcLoading === "true") {
+      item.video.dataset.ugcQueued = "false";
+      continue;
+    }
+
+    startUgcVideoLoad(item.video);
+  }
+};
+
+const requestUgcVideoLoad = function (video, priority) {
+  if (!video || video.getAttribute("src") || video.dataset.ugcLoading === "true") { return; }
+
+  if (video.dataset.ugcQueued === "true") {
+    for (let i = 0; i < csUgcLoadQueue.length; i++) {
+      if (csUgcLoadQueue[i].video === video) {
+        csUgcLoadQueue[i].priority = Math.max(csUgcLoadQueue[i].priority, priority);
+        break;
+      }
+    }
+
+    processUgcLoadQueue();
+    return;
+  }
+
+  video.dataset.ugcQueued = "true";
+  csUgcLoadQueue.push({ video: video, priority: priority });
+  processUgcLoadQueue();
 };
 
 const ensureCreativeStrategistVideoSource = function (video) {
   if (!video) { return false; }
 
-  const source = video.dataset.ugcSrc || video.getAttribute("src");
+  const source = getCreativeStrategistVideoSource(video);
 
   if (!source) { return false; }
 
   bindCreativeStrategistVideoEvents(video);
 
   if (!video.getAttribute("src")) {
-    video.src = source;
+    requestUgcVideoLoad(video, 800);
+    return false;
   }
 
   return true;
@@ -1744,18 +1864,28 @@ const ensureCreativeStrategistVideoSource = function (video) {
 const playCreativeStrategistVideo = function (video) {
   if (!video || csMediaSuspended) { return; }
 
-  if (!ensureCreativeStrategistVideoSource(video)) { return; }
+  video.dataset.wantsPlay = "true";
+
+  if (!video.getAttribute("src")) {
+    requestUgcVideoLoad(video, 850);
+    return;
+  }
+
+  if (video.dataset.ugcLoading === "true") { return; }
+
+  bindCreativeStrategistVideoEvents(video);
 
   video.muted = true;
   video.playsInline = true;
   video.defaultMuted = true;
+  video.preload = "auto";
 
   const playPromise = video.play();
 
   if (playPromise && typeof playPromise.then === "function") {
     playPromise.then(function () {}).catch(function () {
       window.setTimeout(function () {
-        if (!csMediaSuspended) {
+        if (!csMediaSuspended && video.dataset.wantsPlay === "true") {
           video.play().then(function () {}).catch(function () {});
         }
       }, 280);
@@ -1766,6 +1896,7 @@ const playCreativeStrategistVideo = function (video) {
 const pauseCreativeStrategistVideo = function (video) {
   if (!video || video.paused) { return; }
 
+  video.dataset.wantsPlay = "false";
   video.pause();
 };
 
@@ -1800,21 +1931,22 @@ const getUgcMarqueeMetrics = function (track) {
   };
 };
 
-const preloadUgcVideo = function (video) {
-  if (!video || !video.dataset.ugcSrc) { return; }
-
-  bindCreativeStrategistVideoEvents(video);
-
-  if (!video.getAttribute("src")) {
-    video.preload = "auto";
-    video.src = video.dataset.ugcSrc;
-  }
+const preloadUgcVideo = function (video, priority) {
+  requestUgcVideoLoad(video, priority || 1);
 };
 
 const unloadUgcVideo = function (video) {
-  if (!video || !video.dataset.ugcSrc) { return; }
+  if (!video) { return; }
 
+  removeUgcLoadQueueItem(video);
+  video.dataset.wantsPlay = "false";
   video.pause();
+
+  if (video.dataset.ugcLoading === "true") {
+    video.dataset.ugcLoading = "false";
+    csUgcActiveLoads = Math.max(0, csUgcActiveLoads - 1);
+    processUgcLoadQueue();
+  }
 
   if (video.getAttribute("src")) {
     video.removeAttribute("src");
@@ -1829,6 +1961,8 @@ const resetUgcMarqueeState = function () {
   if (!marqueeRoot) { return; }
 
   delete marqueeRoot.dataset.initialPrimed;
+  csUgcLoadQueue = [];
+  csUgcActiveLoads = 0;
 
   const track = marqueeRoot.querySelector(".cs-ugc-marquee__track");
 
@@ -1838,32 +1972,54 @@ const resetUgcMarqueeState = function () {
   }
 };
 
+const getMarqueeFrameLoadScore = function (rect, viewportRight, preloadLeadPx) {
+  const frameWidth = rect.width || 200;
+  const isVisible = rect.left < viewportRight && rect.right > 0;
+
+  if (isVisible) {
+    const visibleLeft = Math.max(rect.left, 0);
+    const visibleRight = Math.min(rect.right, viewportRight);
+    const visibleWidth = Math.max(visibleRight - visibleLeft, 0);
+
+    return 1000 + visibleWidth;
+  }
+
+  if (rect.left >= viewportRight && rect.left < viewportRight + preloadLeadPx) {
+    return preloadLeadPx - (rect.left - viewportRight) + 100;
+  }
+
+  if (rect.right > 0 && rect.right <= frameWidth * 0.5) {
+    return 50 + rect.right;
+  }
+
+  return 0;
+};
+
 const primeInitialUgcFrames = function (frames) {
   const viewportRight = window.innerWidth;
-  const visibleFrames = [];
+  const limits = getCsUgcLimits();
+  const candidates = [];
 
   for (let i = 0; i < frames.length; i++) {
     const rect = frames[i].getBoundingClientRect();
+    const video = frames[i].querySelector("video");
 
-    if (rect.left < viewportRight && rect.right > 0) {
-      const visibleLeft = Math.max(rect.left, 0);
-      const visibleRight = Math.min(rect.right, viewportRight);
-      const visibleWidth = Math.max(visibleRight - visibleLeft, 0);
+    if (!video || rect.left >= viewportRight || rect.right <= 0) { continue; }
 
-      visibleFrames.push({
-        video: frames[i].querySelector("video"),
-        visibleWidth: visibleWidth
-      });
-    }
+    const visibleLeft = Math.max(rect.left, 0);
+    const visibleRight = Math.min(rect.right, viewportRight);
+    const visibleWidth = Math.max(visibleRight - visibleLeft, 0);
+
+    candidates.push({ video: video, score: visibleWidth });
   }
 
-  visibleFrames.sort(function (a, b) {
-    return b.visibleWidth - a.visibleWidth;
+  candidates.sort(function (a, b) {
+    return b.score - a.score;
   });
 
-  for (let i = 0; i < visibleFrames.length; i++) {
-    preloadUgcVideo(visibleFrames[i].video);
-    playCreativeStrategistVideo(visibleFrames[i].video);
+  for (let i = 0; i < candidates.length && i < limits.maxPlaying; i++) {
+    requestUgcVideoLoad(candidates[i].video, 950 - i);
+    playCreativeStrategistVideo(candidates[i].video);
   }
 };
 
@@ -1878,7 +2034,7 @@ const suspendCreativeStrategistMedia = function () {
   const videos = creativeStrategistPanel.querySelectorAll("video");
 
   for (let i = 0; i < videos.length; i++) {
-    if (videos[i].dataset.ugcSrc) {
+    if (videos[i].dataset.ugcSrc || videos[i].dataset.csCaseSrc) {
       unloadUgcVideo(videos[i]);
     } else {
       pauseCreativeStrategistVideo(videos[i]);
@@ -1899,18 +2055,11 @@ const resumeCreativeStrategistMedia = function () {
 
   window.requestAnimationFrame(function () {
     syncCreativeStrategistPlayback();
-    playAllCaseStudyVideos();
   });
 };
 
 const playAllCaseStudyVideos = function () {
-  if (!creativeStrategistPanel || creativeStrategistPanel.hidden) { return; }
-
-  const caseVideos = creativeStrategistPanel.querySelectorAll(".cs-editorial-row__media video");
-
-  for (let i = 0; i < caseVideos.length; i++) {
-    playCreativeStrategistVideo(caseVideos[i]);
-  }
+  syncCaseStudyPlayback();
 };
 
 const syncCaseStudyPlayback = function () {
@@ -1922,8 +2071,11 @@ const syncCaseStudyPlayback = function () {
     const media = caseVideos[i].closest(".cs-editorial-row__media") || caseVideos[i];
     const rect = media.getBoundingClientRect();
 
-    if (rect.top < window.innerHeight + 160 && rect.bottom > -160) {
+    if (rect.top < window.innerHeight + 200 && rect.bottom > -200) {
+      requestUgcVideoLoad(caseVideos[i], 700 + Math.max(window.innerHeight - rect.top, 0));
       playCreativeStrategistVideo(caseVideos[i]);
+    } else {
+      pauseCreativeStrategistVideo(caseVideos[i]);
     }
   }
 };
@@ -1938,6 +2090,8 @@ const syncUgcMarqueePlayback = function () {
   const metrics = getUgcMarqueeMetrics(track);
   const viewportRight = window.innerWidth;
   const preloadLeadPx = metrics.preloadLeadPx;
+  const limits = getCsUgcLimits();
+  const loadCandidates = [];
   const playCandidates = [];
 
   if (marqueeRoot.dataset.initialPrimed !== "true") {
@@ -1949,9 +2103,12 @@ const syncUgcMarqueePlayback = function () {
     const video = frames[i].querySelector("video");
     const rect = frames[i].getBoundingClientRect();
     const frameWidth = rect.width || 200;
+    const loadScore = getMarqueeFrameLoadScore(rect, viewportRight, preloadLeadPx);
+    const shouldPreload = loadScore > 0;
+    const shouldUnload = rect.right < -(frameWidth * 2) || rect.left > window.innerWidth + preloadLeadPx * 1.5;
     const isVisible = rect.left < viewportRight && rect.right > 0;
-    const shouldPreload = rect.left < viewportRight + preloadLeadPx && rect.right > -(frameWidth * 0.5);
-    const shouldUnload = rect.right < -(frameWidth * 1.25);
+
+    if (!video) { continue; }
 
     if (shouldUnload) {
       unloadUgcVideo(video);
@@ -1959,7 +2116,7 @@ const syncUgcMarqueePlayback = function () {
     }
 
     if (shouldPreload) {
-      preloadUgcVideo(video);
+      loadCandidates.push({ video: video, score: loadScore });
     }
 
     if (isVisible) {
@@ -1970,11 +2127,22 @@ const syncUgcMarqueePlayback = function () {
 
       playCandidates.push({
         video: video,
-        score: visibleWidth - centerDistance * 0.15
+        score: visibleWidth * 1000 - centerDistance * 0.15
       });
-    } else {
-      pauseCreativeStrategistVideo(video);
+    } else if (loadScore > 100 && video.getAttribute("src") && video.dataset.ugcLoading !== "true") {
+      playCandidates.push({
+        video: video,
+        score: loadScore
+      });
     }
+  }
+
+  loadCandidates.sort(function (a, b) {
+    return b.score - a.score;
+  });
+
+  for (let i = 0; i < loadCandidates.length; i++) {
+    requestUgcVideoLoad(loadCandidates[i].video, loadCandidates[i].score);
   }
 
   playCandidates.sort(function (a, b) {
@@ -1982,7 +2150,7 @@ const syncUgcMarqueePlayback = function () {
   });
 
   for (let i = 0; i < playCandidates.length; i++) {
-    if (i < CS_UGC_MAX_PLAYING) {
+    if (i < limits.maxPlaying) {
       playCreativeStrategistVideo(playCandidates[i].video);
     } else {
       pauseCreativeStrategistVideo(playCandidates[i].video);
@@ -2005,7 +2173,7 @@ const syncCreativeStrategistPlayback = function () {
 const startUgcMarqueeSync = function () {
   stopUgcMarqueeSync();
   syncCreativeStrategistPlayback();
-  csUgcPreloadTimer = window.setInterval(syncCreativeStrategistPlayback, 160);
+  csUgcPreloadTimer = window.setInterval(syncCreativeStrategistPlayback, CS_UGC_SYNC_MS);
 };
 
 const bindCreativeStrategistUgcPlayback = function () {
