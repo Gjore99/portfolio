@@ -2063,6 +2063,7 @@ main {
 .cs-ugc-marquee {
   overflow: hidden;
   width: 100%;
+  contain: layout paint;
   mask-image: linear-gradient(
     to right,
     transparent 0%,
@@ -2080,11 +2081,12 @@ main {
   animation: csUgcMarquee 110s linear infinite;
   animation-play-state: paused;
   will-change: transform;
+  backface-visibility: hidden;
 }
 
 @keyframes csUgcMarquee {
-  0% { transform: translateX(0); }
-  100% { transform: translateX(-50%); }
+  0% { transform: translate3d(0, 0, 0); }
+  100% { transform: translate3d(-50%, 0, 0); }
 }
 
 .cs-ugc-frame {
@@ -2097,6 +2099,9 @@ main {
   border: 1px solid hsla(183, 100%, 55%, 0.18);
   background: hsl(240, 2%, 8%);
   box-shadow: 0 8px 28px rgba(0, 0, 0, 0.35);
+  will-change: transform;
+  transform: translateZ(0);
+  backface-visibility: hidden;
 }
 
 .cs-ugc-frame video,
@@ -2108,6 +2113,9 @@ main {
   pointer-events: none;
   user-select: none;
   background: hsl(240, 2%, 10%);
+  will-change: transform;
+  transform: translateZ(0);
+  backface-visibility: hidden;
 }
 
 .cs-editorial-stack {
