@@ -1663,24 +1663,16 @@ const projectList = document.querySelector("[data-project-list]");
 
 const CS_UGC_VIDEO_BASE = "./assets/videos/creative-strategist";
 const CS_UGC_VIDEO_COUNT = 22;
-const CS_UGC_VIEWPORT_MARGIN_PX = 200;
-const CS_UGC_MAX_BUFFERING = 4;
-const CS_UGC_MAX_PLAYING = 4;
+const CS_UGC_MAX_PLAYING = 5;
 const CS_UGC_MARQUEE_DURATION = 110;
-const CS_UGC_MARQUEE_PLAY_SYNC_MS = 220;
+const CS_UGC_PRELOAD_SECONDS = 1;
 
 const getCsUgcVideoSrc = function (index) {
   return `${CS_UGC_VIDEO_BASE}/ugc-loop-${index}.mp4`;
 };
 
-let csUgcLoadQueue = [];
-let csUgcActiveBuffering = 0;
-let csUgcPlaySyncTimer = null;
-let csUgcPlayRaf = null;
-let csUgcFrameObserver = null;
-let csCaseVideoObserver = null;
+let csUgcPreloadTimer = null;
 let csMediaSuspended = false;
-let csCreativeStrategistObserversReady = false;
 
 const buildCsUgcFrameHtml = function (index) {
   return `
@@ -1704,15 +1696,14 @@ const bindCreativeStrategistVideoEvents = function (video) {
 
   const retryPlay = function () {
     if (csMediaSuspended || !creativeStrategistPanel || creativeStrategistPanel.hidden) { return; }
-    if (video.dataset.ugcShouldPlay !== "true") { return; }
 
     video.muted = true;
     video.playsInline = true;
 
     const playPromise = video.play();
 
-    if (playPromise && typeof playPromise.catch === "function") {
-      playPromise.catch(function () {});
+    if (playPromise && typeof playPromise.then === "function") {
+      playPromise.then(function () {}).catch(function () {});
     }
   };
 
@@ -1724,31 +1715,18 @@ const bindCreativeStrategistVideoEvents = function (video) {
   });
 
   video.addEventListener("error", function () {
-    const source = video.dataset.ugcSrc || video.dataset.csCaseSrc || video.getAttribute("src");
+    const source = video.dataset.ugcSrc || video.getAttribute("src");
 
     if (!source) { return; }
 
-    video.dataset.ugcBuffering = "false";
-    video.dataset.ugcLoaded = "false";
-    video.dataset.ugcQueued = "false";
-    csUgcActiveBuffering = Math.max(0, csUgcActiveBuffering - 1);
     video.removeAttribute("src");
     video.load();
-    dequeueUgcVideoLoads();
+    video.src = source;
   });
 };
 
 const ensureCreativeStrategistVideoSource = function (video) {
   if (!video) { return false; }
-
-  const caseSrc = video.dataset.csCaseSrc;
-
-  if (caseSrc && !video.getAttribute("src")) {
-    bindCreativeStrategistVideoEvents(video);
-    video.src = caseSrc;
-    video.dataset.ugcLoaded = "true";
-    return true;
-  }
 
   const source = video.dataset.ugcSrc || video.getAttribute("src");
 
@@ -1756,18 +1734,15 @@ const ensureCreativeStrategistVideoSource = function (video) {
 
   bindCreativeStrategistVideoEvents(video);
 
-  return Boolean(video.getAttribute("src"));
+  if (!video.getAttribute("src")) {
+    video.src = source;
+  }
+
+  return true;
 };
 
 const playCreativeStrategistVideo = function (video) {
   if (!video || csMediaSuspended) { return; }
-
-  video.dataset.ugcShouldPlay = "true";
-
-  if (!video.getAttribute("src")) {
-    queueUgcVideoLoad(video, getVideoPlayPriority(video));
-    return;
-  }
 
   if (!ensureCreativeStrategistVideoSource(video)) { return; }
 
@@ -1777,11 +1752,11 @@ const playCreativeStrategistVideo = function (video) {
 
   const playPromise = video.play();
 
-  if (playPromise && typeof playPromise.catch === "function") {
-    playPromise.catch(function () {
+  if (playPromise && typeof playPromise.then === "function") {
+    playPromise.then(function () {}).catch(function () {
       window.setTimeout(function () {
-        if (!csMediaSuspended && video.dataset.ugcShouldPlay === "true") {
-          video.play().catch(function () {});
+        if (!csMediaSuspended) {
+          video.play().then(function () {}).catch(function () {});
         }
       }, 280);
     });
@@ -1789,13 +1764,9 @@ const playCreativeStrategistVideo = function (video) {
 };
 
 const pauseCreativeStrategistVideo = function (video) {
-  if (!video) { return; }
+  if (!video || video.paused) { return; }
 
-  video.dataset.ugcShouldPlay = "false";
-
-  if (!video.paused) {
-    video.pause();
-  }
+  video.pause();
 };
 
 const setCreativeStrategistMarqueeRunning = function (isRunning) {
@@ -1808,160 +1779,48 @@ const setCreativeStrategistMarqueeRunning = function (isRunning) {
   }
 };
 
-const removeQueuedUgcVideo = function (video) {
-  if (!video) { return; }
-
-  csUgcLoadQueue = csUgcLoadQueue.filter(function (item) {
-    return item.video !== video;
-  });
-
-  video.dataset.ugcQueued = "false";
-};
-
-const finishUgcVideoBuffer = function (video) {
-  if (!video || video.dataset.ugcBuffering !== "true") { return; }
-
-  video.dataset.ugcBuffering = "false";
-  video.dataset.ugcLoaded = "true";
-  csUgcActiveBuffering = Math.max(0, csUgcActiveBuffering - 1);
-  dequeueUgcVideoLoads();
-
-  if (video.dataset.ugcShouldPlay === "true") {
-    playCreativeStrategistVideo(video);
+const getUgcMarqueeMetrics = function (track) {
+  if (!track) {
+    return { preloadLeadPx: 200, pixelsPerSecond: 200 };
   }
+
+  if (!track.dataset.pixelsPerSecond) {
+    const halfWidth = track.scrollWidth / 2;
+    const pixelsPerSecond = halfWidth > 0 ? halfWidth / CS_UGC_MARQUEE_DURATION : 200;
+
+    track.dataset.pixelsPerSecond = String(pixelsPerSecond);
+    track.dataset.halfWidth = String(halfWidth);
+  }
+
+  const pixelsPerSecond = parseFloat(track.dataset.pixelsPerSecond);
+
+  return {
+    preloadLeadPx: pixelsPerSecond * CS_UGC_PRELOAD_SECONDS,
+    pixelsPerSecond: pixelsPerSecond
+  };
 };
 
-const startUgcVideoBuffer = function (video) {
-  if (!video || video.dataset.ugcLoaded === "true" || video.dataset.ugcBuffering === "true") { return; }
+const preloadUgcVideo = function (video) {
+  if (!video || !video.dataset.ugcSrc) { return; }
 
-  const source = video.dataset.ugcSrc || video.dataset.csCaseSrc;
-
-  if (!source) { return; }
-
-  csUgcActiveBuffering += 1;
-  video.dataset.ugcBuffering = "true";
-  video.dataset.ugcQueued = "false";
   bindCreativeStrategistVideoEvents(video);
 
-  const onReady = function () {
-    video.removeEventListener("loadeddata", onReady);
-    video.removeEventListener("canplay", onReady);
-    finishUgcVideoBuffer(video);
-  };
-
-  video.addEventListener("loadeddata", onReady);
-  video.addEventListener("canplay", onReady);
-  video.preload = "auto";
-  video.src = source;
-
-  if (video.readyState >= 2) {
-    window.requestAnimationFrame(onReady);
+  if (!video.getAttribute("src")) {
+    video.preload = "auto";
+    video.src = video.dataset.ugcSrc;
   }
-};
-
-const dequeueUgcVideoLoads = function () {
-  while (csUgcActiveBuffering < CS_UGC_MAX_BUFFERING && csUgcLoadQueue.length) {
-    const item = csUgcLoadQueue.shift();
-
-    if (!item || !item.video || !item.video.isConnected) { continue; }
-
-    if (item.video.dataset.ugcLoaded === "true" || item.video.dataset.ugcBuffering === "true") {
-      item.video.dataset.ugcQueued = "false";
-      continue;
-    }
-
-    startUgcVideoBuffer(item.video);
-  }
-};
-
-const queueUgcVideoLoad = function (video, priority) {
-  if (!video || video.dataset.ugcLoaded === "true" || video.dataset.ugcBuffering === "true") { return; }
-
-  if (video.dataset.ugcQueued === "true") {
-    for (let i = 0; i < csUgcLoadQueue.length; i++) {
-      if (csUgcLoadQueue[i].video === video) {
-        csUgcLoadQueue[i].priority = Math.max(csUgcLoadQueue[i].priority, priority);
-        break;
-      }
-    }
-
-    csUgcLoadQueue.sort(function (a, b) {
-      return b.priority - a.priority;
-    });
-
-    dequeueUgcVideoLoads();
-    return;
-  }
-
-  video.dataset.ugcQueued = "true";
-  csUgcLoadQueue.push({ video: video, priority: priority });
-  csUgcLoadQueue.sort(function (a, b) {
-    return b.priority - a.priority;
-  });
-  dequeueUgcVideoLoads();
 };
 
 const unloadUgcVideo = function (video) {
-  if (!video) { return; }
+  if (!video || !video.dataset.ugcSrc) { return; }
 
-  removeQueuedUgcVideo(video);
-  pauseCreativeStrategistVideo(video);
-
-  if (video.dataset.ugcBuffering === "true") {
-    video.dataset.ugcBuffering = "false";
-    csUgcActiveBuffering = Math.max(0, csUgcActiveBuffering - 1);
-    dequeueUgcVideoLoads();
-  }
-
-  video.dataset.ugcLoaded = "false";
+  video.pause();
 
   if (video.getAttribute("src")) {
     video.removeAttribute("src");
+    video.preload = "none";
     video.load();
   }
-};
-
-const isElementInViewport = function (rect) {
-  return rect.bottom > 0
-    && rect.top < window.innerHeight
-    && rect.right > 0
-    && rect.left < window.innerWidth;
-};
-
-const isElementNearViewport = function (rect, marginPx) {
-  const margin = marginPx || CS_UGC_VIEWPORT_MARGIN_PX;
-
-  return rect.bottom > -margin
-    && rect.top < window.innerHeight + margin
-    && rect.right > -margin
-    && rect.left < window.innerWidth + margin;
-};
-
-const shouldUnloadUgcMarqueeFrame = function (rect) {
-  const frameWidth = rect.width || 200;
-  const unloadMargin = Math.max(CS_UGC_VIEWPORT_MARGIN_PX, frameWidth * 1.5);
-
-  return rect.right < -unloadMargin || rect.left > window.innerWidth + unloadMargin;
-};
-
-const shouldUnloadCaseVideo = function (rect) {
-  return !isElementNearViewport(rect, CS_UGC_VIEWPORT_MARGIN_PX * 2);
-};
-
-const getVideoPlayPriority = function (video) {
-  const host = video.closest("[data-cs-ugc-frame], .cs-editorial-row__media") || video;
-  const rect = host.getBoundingClientRect();
-
-  if (!isElementInViewport(rect)) { return 0; }
-
-  const visibleLeft = Math.max(rect.left, 0);
-  const visibleRight = Math.min(rect.right, window.innerWidth);
-  const visibleTop = Math.max(rect.top, 0);
-  const visibleBottom = Math.min(rect.bottom, window.innerHeight);
-  const visibleWidth = Math.max(visibleRight - visibleLeft, 0);
-  const visibleHeight = Math.max(visibleBottom - visibleTop, 0);
-
-  return visibleWidth * visibleHeight;
 };
 
 const resetUgcMarqueeState = function () {
@@ -1969,72 +1828,104 @@ const resetUgcMarqueeState = function () {
 
   if (!marqueeRoot) { return; }
 
-  csUgcLoadQueue = [];
-  csUgcActiveBuffering = 0;
+  delete marqueeRoot.dataset.initialPrimed;
+
+  const track = marqueeRoot.querySelector(".cs-ugc-marquee__track");
+
+  if (track) {
+    delete track.dataset.pixelsPerSecond;
+    delete track.dataset.halfWidth;
+  }
 };
 
-const handleUgcFrameIntersection = function (entries) {
-  if (csMediaSuspended || !creativeStrategistPanel || creativeStrategistPanel.hidden) { return; }
+const primeInitialUgcFrames = function (frames) {
+  const viewportRight = window.innerWidth;
+  const visibleFrames = [];
 
-  for (let i = 0; i < entries.length; i++) {
-    const entry = entries[i];
-    const video = entry.target.querySelector("video");
+  for (let i = 0; i < frames.length; i++) {
+    const rect = frames[i].getBoundingClientRect();
 
-    if (!video) { continue; }
+    if (rect.left < viewportRight && rect.right > 0) {
+      const visibleLeft = Math.max(rect.left, 0);
+      const visibleRight = Math.min(rect.right, viewportRight);
+      const visibleWidth = Math.max(visibleRight - visibleLeft, 0);
 
-    const rect = entry.boundingClientRect;
-
-    if (entry.isIntersecting || isElementNearViewport(rect, CS_UGC_VIEWPORT_MARGIN_PX)) {
-      queueUgcVideoLoad(video, Math.max(getVideoPlayPriority(video), entry.intersectionRect.width, 1));
-
-      if (isElementInViewport(rect)) {
-        video.dataset.ugcShouldPlay = "true";
-
-        if (video.dataset.ugcLoaded === "true") {
-          playCreativeStrategistVideo(video);
-        }
-      }
-    } else if (shouldUnloadUgcMarqueeFrame(rect)) {
-      unloadUgcVideo(video);
-    } else {
-      pauseCreativeStrategistVideo(video);
+      visibleFrames.push({
+        video: frames[i].querySelector("video"),
+        visibleWidth: visibleWidth
+      });
     }
   }
 
-  scheduleUgcPlaySync();
+  visibleFrames.sort(function (a, b) {
+    return b.visibleWidth - a.visibleWidth;
+  });
+
+  for (let i = 0; i < visibleFrames.length; i++) {
+    preloadUgcVideo(visibleFrames[i].video);
+    playCreativeStrategistVideo(visibleFrames[i].video);
+  }
 };
 
-const handleCaseVideoIntersection = function (entries) {
-  if (csMediaSuspended || !creativeStrategistPanel || creativeStrategistPanel.hidden) { return; }
+const suspendCreativeStrategistMedia = function () {
+  if (!creativeStrategistPanel) { return; }
 
-  for (let i = 0; i < entries.length; i++) {
-    const entry = entries[i];
-    const video = entry.target.querySelector("video");
+  csMediaSuspended = true;
+  setCreativeStrategistMarqueeRunning(false);
+  stopUgcMarqueeSync();
+  resetUgcMarqueeState();
 
-    if (!video) { continue; }
+  const videos = creativeStrategistPanel.querySelectorAll("video");
 
-    const rect = entry.boundingClientRect;
-
-    if (entry.isIntersecting || isElementNearViewport(rect, CS_UGC_VIEWPORT_MARGIN_PX)) {
-      queueUgcVideoLoad(video, Math.max(getVideoPlayPriority(video), entry.intersectionRect.width * entry.intersectionRect.height, 1));
-
-      if (isElementInViewport(rect) && entry.intersectionRatio > 0.08) {
-        video.dataset.ugcShouldPlay = "true";
-
-        if (video.dataset.ugcLoaded === "true") {
-          playCreativeStrategistVideo(video);
-        }
-      } else {
-        pauseCreativeStrategistVideo(video);
-      }
-    } else if (shouldUnloadCaseVideo(rect)) {
-      unloadUgcVideo(video);
+  for (let i = 0; i < videos.length; i++) {
+    if (videos[i].dataset.ugcSrc) {
+      unloadUgcVideo(videos[i]);
     } else {
-      pauseCreativeStrategistVideo(video);
+      pauseCreativeStrategistVideo(videos[i]);
     }
   }
+};
 
-  scheduleUgcPlaySync();
+const pauseCreativeStrategistMedia = function () {
+  suspendCreativeStrategistMedia();
+};
+
+const resumeCreativeStrategistMedia = function () {
+  if (!creativeStrategistPanel || creativeStrategistPanel.hidden || !isPortfolioPageActive()) { return; }
+
+  csMediaSuspended = false;
+  setCreativeStrategistMarqueeRunning(true);
+  startUgcMarqueeSync();
+
+  window.requestAnimationFrame(function () {
+    syncCreativeStrategistPlayback();
+    playAllCaseStudyVideos();
+  });
+};
+
+const playAllCaseStudyVideos = function () {
+  if (!creativeStrategistPanel || creativeStrategistPanel.hidden) { return; }
+
+  const caseVideos = creativeStrategistPanel.querySelectorAll(".cs-editorial-row__media video");
+
+  for (let i = 0; i < caseVideos.length; i++) {
+    playCreativeStrategistVideo(caseVideos[i]);
+  }
+};
+
+const syncCaseStudyPlayback = function () {
+  if (!creativeStrategistPanel || creativeStrategistPanel.hidden) { return; }
+
+  const caseVideos = creativeStrategistPanel.querySelectorAll(".cs-editorial-row__media video");
+
+  for (let i = 0; i < caseVideos.length; i++) {
+    const media = caseVideos[i].closest(".cs-editorial-row__media") || caseVideos[i];
+    const rect = media.getBoundingClientRect();
+
+    if (rect.top < window.innerHeight + 160 && rect.bottom > -160) {
+      playCreativeStrategistVideo(caseVideos[i]);
+    }
+  }
 };
 
 const syncUgcMarqueePlayback = function () {
@@ -2042,25 +1933,45 @@ const syncUgcMarqueePlayback = function () {
 
   if (!marqueeRoot || !creativeStrategistPanel || creativeStrategistPanel.hidden || csMediaSuspended) { return; }
 
+  const track = marqueeRoot.querySelector(".cs-ugc-marquee__track");
   const frames = marqueeRoot.querySelectorAll("[data-cs-ugc-frame]");
+  const metrics = getUgcMarqueeMetrics(track);
+  const viewportRight = window.innerWidth;
+  const preloadLeadPx = metrics.preloadLeadPx;
   const playCandidates = [];
+
+  if (marqueeRoot.dataset.initialPrimed !== "true") {
+    primeInitialUgcFrames(frames);
+    marqueeRoot.dataset.initialPrimed = "true";
+  }
 
   for (let i = 0; i < frames.length; i++) {
     const video = frames[i].querySelector("video");
     const rect = frames[i].getBoundingClientRect();
+    const frameWidth = rect.width || 200;
+    const isVisible = rect.left < viewportRight && rect.right > 0;
+    const shouldPreload = rect.left < viewportRight + preloadLeadPx && rect.right > -(frameWidth * 0.5);
+    const shouldUnload = rect.right < -(frameWidth * 1.25);
 
-    if (!video) { continue; }
-
-    if (isElementNearViewport(rect, CS_UGC_VIEWPORT_MARGIN_PX)) {
-      const priority = Math.max(getVideoPlayPriority(video), 1);
-
-      queueUgcVideoLoad(video, priority);
-
-      if (isElementInViewport(rect) && priority > 0) {
-        playCandidates.push({ video: video, score: priority });
-      }
-    } else if (shouldUnloadUgcMarqueeFrame(rect)) {
+    if (shouldUnload) {
       unloadUgcVideo(video);
+      continue;
+    }
+
+    if (shouldPreload) {
+      preloadUgcVideo(video);
+    }
+
+    if (isVisible) {
+      const visibleLeft = Math.max(rect.left, 0);
+      const visibleRight = Math.min(rect.right, viewportRight);
+      const visibleWidth = Math.max(visibleRight - visibleLeft, 0);
+      const centerDistance = Math.abs((rect.left + rect.right) / 2 - viewportRight / 2);
+
+      playCandidates.push({
+        video: video,
+        score: visibleWidth - centerDistance * 0.15
+      });
     } else {
       pauseCreativeStrategistVideo(video);
     }
@@ -2072,203 +1983,41 @@ const syncUgcMarqueePlayback = function () {
 
   for (let i = 0; i < playCandidates.length; i++) {
     if (i < CS_UGC_MAX_PLAYING) {
-      playCandidates[i].video.dataset.ugcShouldPlay = "true";
-
-      if (playCandidates[i].video.dataset.ugcLoaded === "true") {
-        playCreativeStrategistVideo(playCandidates[i].video);
-      }
+      playCreativeStrategistVideo(playCandidates[i].video);
     } else {
       pauseCreativeStrategistVideo(playCandidates[i].video);
     }
   }
 };
 
-const primeVisibleCreativeStrategistVideos = function () {
-  if (!creativeStrategistPanel || creativeStrategistPanel.hidden || csMediaSuspended) { return; }
-
-  const ugcFrames = creativeStrategistPanel.querySelectorAll("[data-cs-ugc-frame]");
-
-  for (let i = 0; i < ugcFrames.length; i++) {
-    const rect = ugcFrames[i].getBoundingClientRect();
-
-    if (!isElementNearViewport(rect, CS_UGC_VIEWPORT_MARGIN_PX)) { continue; }
-
-    const video = ugcFrames[i].querySelector("video");
-
-    if (!video) { continue; }
-
-    queueUgcVideoLoad(video, Math.max(getVideoPlayPriority(video), 1));
-
-    if (isElementInViewport(rect)) {
-      video.dataset.ugcShouldPlay = "true";
-    }
-  }
-
-  const caseMediaBlocks = creativeStrategistPanel.querySelectorAll(".cs-editorial-row__media");
-
-  for (let i = 0; i < caseMediaBlocks.length; i++) {
-    const rect = caseMediaBlocks[i].getBoundingClientRect();
-
-    if (!isElementNearViewport(rect, CS_UGC_VIEWPORT_MARGIN_PX)) { continue; }
-
-    const video = caseMediaBlocks[i].querySelector("video");
-
-    if (!video) { continue; }
-
-    queueUgcVideoLoad(video, Math.max(getVideoPlayPriority(video), 1));
-
-    if (isElementInViewport(rect)) {
-      video.dataset.ugcShouldPlay = "true";
-    }
-  }
-
-  scheduleUgcPlaySync();
-};
-
-const scheduleUgcPlaySync = function () {
-  if (csUgcPlayRaf) { return; }
-
-  csUgcPlayRaf = window.requestAnimationFrame(function () {
-    csUgcPlayRaf = null;
-    syncUgcMarqueePlayback();
-  });
-};
-
-const disconnectCreativeStrategistObservers = function () {
-  if (csUgcFrameObserver) {
-    csUgcFrameObserver.disconnect();
-    csUgcFrameObserver = null;
-  }
-
-  if (csCaseVideoObserver) {
-    csCaseVideoObserver.disconnect();
-    csCaseVideoObserver = null;
-  }
-
-  csCreativeStrategistObserversReady = false;
-};
-
-const attachCreativeStrategistObservers = function () {
-  if (!creativeStrategistPanel) { return; }
-
-  disconnectCreativeStrategistObservers();
-
-  const caseObserverOptions = {
-    root: null,
-    rootMargin: `${CS_UGC_VIEWPORT_MARGIN_PX}px`,
-    threshold: [0, 0.08, 0.25, 0.5]
-  };
-  const ugcObserverOptions = {
-    root: null,
-    rootMargin: getUgcFrameObserverMargin(),
-    threshold: [0, 0.08, 0.25, 0.5]
-  };
-
-  csUgcFrameObserver = new IntersectionObserver(handleUgcFrameIntersection, ugcObserverOptions);
-  csCaseVideoObserver = new IntersectionObserver(handleCaseVideoIntersection, caseObserverOptions);
-
-  const ugcFrames = creativeStrategistPanel.querySelectorAll("[data-cs-ugc-frame]");
-
-  for (let i = 0; i < ugcFrames.length; i++) {
-    csUgcFrameObserver.observe(ugcFrames[i]);
-  }
-
-  const caseMediaBlocks = creativeStrategistPanel.querySelectorAll(".cs-editorial-row__media");
-
-  for (let i = 0; i < caseMediaBlocks.length; i++) {
-    csCaseVideoObserver.observe(caseMediaBlocks[i]);
-  }
-
-  csCreativeStrategistObserversReady = true;
-};
-
 const stopUgcMarqueeSync = function () {
-  if (csUgcPlaySyncTimer) {
-    window.clearInterval(csUgcPlaySyncTimer);
-    csUgcPlaySyncTimer = null;
+  if (csUgcPreloadTimer) {
+    window.clearInterval(csUgcPreloadTimer);
+    csUgcPreloadTimer = null;
   }
+};
 
-  if (csUgcPlayRaf) {
-    window.cancelAnimationFrame(csUgcPlayRaf);
-    csUgcPlayRaf = null;
-  }
+const syncCreativeStrategistPlayback = function () {
+  syncUgcMarqueePlayback();
+  syncCaseStudyPlayback();
 };
 
 const startUgcMarqueeSync = function () {
   stopUgcMarqueeSync();
-  scheduleUgcPlaySync();
-  csUgcPlaySyncTimer = window.setInterval(scheduleUgcPlaySync, CS_UGC_MARQUEE_PLAY_SYNC_MS);
+  syncCreativeStrategistPlayback();
+  csUgcPreloadTimer = window.setInterval(syncCreativeStrategistPlayback, 160);
 };
 
-const suspendCreativeStrategistMedia = function () {
-  if (!creativeStrategistPanel) { return; }
-
-  csMediaSuspended = true;
-  setCreativeStrategistMarqueeRunning(false);
-  stopUgcMarqueeSync();
-  disconnectCreativeStrategistObservers();
-  resetUgcMarqueeState();
-
-  const videos = creativeStrategistPanel.querySelectorAll("video");
-
-  for (let i = 0; i < videos.length; i++) {
-    unloadUgcVideo(videos[i]);
-  }
-};
-
-const pauseCreativeStrategistMedia = function () {
-  suspendCreativeStrategistMedia();
-};
-
-const resumeCreativeStrategistMedia = function () {
-  if (!shouldRunCreativeStrategistMedia()) { return; }
-
+const bindCreativeStrategistUgcPlayback = function () {
   csMediaSuspended = false;
+  setCreativeStrategistMarqueeRunning(true);
+  startUgcMarqueeSync();
+};
 
-  const startPlayback = function () {
-    attachCreativeStrategistObservers();
-    primeVisibleCreativeStrategistVideos();
-    setCreativeStrategistMarqueeRunning(true);
-    startUgcMarqueeSync();
-    scheduleUgcPlaySync();
-  };
-
+const bindCreativeStrategistCasePlayback = function () {
   window.requestAnimationFrame(function () {
-    window.requestAnimationFrame(startPlayback);
+    playAllCaseStudyVideos();
   });
-};
-
-const getUgcFrameObserverMargin = function () {
-  const track = creativeStrategistPanel
-    ? creativeStrategistPanel.querySelector(".cs-ugc-marquee__track")
-    : null;
-  let marginPx = CS_UGC_VIEWPORT_MARGIN_PX;
-
-  if (track && track.scrollWidth > 0) {
-    const pixelsPerSecond = (track.scrollWidth / 2) / CS_UGC_MARQUEE_DURATION;
-
-    marginPx = Math.max(CS_UGC_VIEWPORT_MARGIN_PX, Math.ceil(pixelsPerSecond));
-  }
-
-  return `${marginPx}px`;
-};
-
-const shouldRunCreativeStrategistMedia = function () {
-  return Boolean(
-    creativeStrategistPanel
-    && !creativeStrategistPanel.hidden
-    && isPortfolioPageActive()
-    && !document.hidden
-  );
-};
-
-const syncCreativeStrategistMediaState = function () {
-  if (shouldRunCreativeStrategistMedia()) {
-    initCreativeStrategistMedia();
-    resumeCreativeStrategistMedia();
-  } else {
-    pauseCreativeStrategistMedia();
-  }
 };
 
 const initCreativeStrategistUgcMarquee = function () {
@@ -2296,20 +2045,29 @@ const initCreativeStrategistUgcMarquee = function () {
 
 const initCreativeStrategistMedia = function () {
   initCreativeStrategistUgcMarquee();
-
-  const caseVideos = creativeStrategistPanel
-    ? creativeStrategistPanel.querySelectorAll(".cs-editorial-video")
-    : [];
-
-  for (let i = 0; i < caseVideos.length; i++) {
-    bindCreativeStrategistVideoEvents(caseVideos[i]);
-  }
+  bindCreativeStrategistUgcPlayback();
+  bindCreativeStrategistCasePlayback();
 };
 
 const isPortfolioPageActive = function () {
   const portfolioPage = document.querySelector('[data-page="portfolio"]');
 
   return Boolean(portfolioPage && portfolioPage.classList.contains("active"));
+};
+
+const syncCreativeStrategistMediaState = function () {
+  if (
+    creativeStrategistPanel
+    && !creativeStrategistPanel.hidden
+    && isPortfolioPageActive()
+    && !document.hidden
+  ) {
+    csMediaSuspended = false;
+    initCreativeStrategistMedia();
+    resumeCreativeStrategistMedia();
+  } else {
+    pauseCreativeStrategistMedia();
+  }
 };
 
 const syncCreativeStrategistPanel = function (selectedValue) {
@@ -2320,10 +2078,9 @@ const syncCreativeStrategistPanel = function (selectedValue) {
     creativeStrategistPanel.classList.toggle("active", isCreativeStrategist);
 
     if (isCreativeStrategist) {
-      initCreativeStrategistMedia();
-
       if (isPortfolioPageActive()) {
         csMediaSuspended = false;
+        initCreativeStrategistMedia();
         resumeCreativeStrategistMedia();
       } else {
         pauseCreativeStrategistMedia();
