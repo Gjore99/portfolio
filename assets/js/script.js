@@ -145,6 +145,30 @@ const buildPhotoGalleryImages = function (basePath, count) {
   return images;
 };
 
+const buildEscWorkshopGalleryImages = function () {
+  const files = [
+    "photo-1.jpg",
+    "photo-2.jpg",
+    "photo-3.jpg",
+    "photo-4.jpg",
+    "photo-5.jpg",
+    "photo-6.jpg",
+    "photo-7.jpg",
+    "photo-8.jpg",
+    "photo-9.jpeg",
+    "photo-10.jpg",
+    "photo-11.jpg",
+    "photo-12.jpg",
+    "photo-13.jpg",
+    "photo-14.jpeg",
+    "photo-15.jpg"
+  ];
+
+  return files.map(function (file) {
+    return `${ESC_WORKSHOPS_BASE}/${file}`;
+  });
+};
+
 const buildNamedGalleryImages = function (basePath, count, namePrefix, extension) {
   const images = [];
 
@@ -170,7 +194,7 @@ const getAppShowcaseImages = function (showcase) {
 const designShowcases = {
   nexit: {
     title: "NEXIT Construction Ltd",
-    tag: "Branding Work",
+    tag: "Performance Creative",
     images: buildGalleryImages(NEXIT_GALLERY_BASE, 8),
     bodyHtml: `
       <section class="design-modal-section">
@@ -206,7 +230,7 @@ const designShowcases = {
   },
   blaze: {
     title: "Blaze Trail",
-    tag: "Branding Work",
+    tag: "Performance Creative",
     images: buildGalleryImages(BLAZE_GALLERY_BASE, 14),
     bodyHtml: `
       <section class="design-modal-section">
@@ -242,7 +266,7 @@ const designShowcases = {
   },
   verdevesta: {
     title: "Verdevesta · Botanical Branding & Retail Ecosystem",
-    tag: "Branding Work",
+    tag: "Performance Creative",
     images: buildGalleryImages(VERDEVESTA_GALLERY_BASE, 9),
     bodyHtml: `
       <section class="design-modal-section">
@@ -282,7 +306,7 @@ const designShowcases = {
   },
   verdelume: {
     title: "Verdelume Botanical Beverage Identity",
-    tag: "Branding Work",
+    tag: "Performance Creative",
     images: buildGalleryImages(VERDELUME_GALLERY_BASE, 9),
     bodyHtml: `
       <section class="design-modal-section">
@@ -318,7 +342,7 @@ const designShowcases = {
   },
   parabola: {
     title: "Parabola Sonic Identity & Apparel Systems",
-    tag: "Branding Work",
+    tag: "Performance Creative",
     images: buildGalleryImages(PARABOLA_GALLERY_BASE, 9),
     bodyHtml: `
       <section class="design-modal-section">
@@ -354,7 +378,7 @@ const designShowcases = {
   },
   china: {
     title: "Mystic Serenity — Digital Matte Painting",
-    tag: "Art",
+    tag: "Visual Art",
     images: buildGalleryImages(CHINA_GALLERY_BASE, 4),
     bodyHtml: `
       <section class="design-modal-section">
@@ -390,7 +414,7 @@ const designShowcases = {
   },
   truck: {
     title: "Sunset Chrome — High-Fidelity Vehicle Compositing",
-    tag: "Art",
+    tag: "Visual Art",
     images: buildGalleryImages(TRUCK_GALLERY_BASE, 4),
     bodyHtml: `
       <section class="design-modal-section">
@@ -426,7 +450,7 @@ const designShowcases = {
   },
   sentinel: {
     title: "The Sentinel — Advanced Luminescent Compositing",
-    tag: "Art",
+    tag: "Visual Art",
     images: buildGalleryImages(SENTINEL_GALLERY_BASE, 4),
     bodyHtml: `
       <section class="design-modal-section">
@@ -462,9 +486,15 @@ const designShowcases = {
   },
   thumbnail: {
     title: "High-CTR YouTube Thumbnail Portfolio",
-    tag: "Thumbnails",
+    tag: "Performance Creative",
     images: THUMBNAIL_GALLERY_IMAGES,
     bodyHtml: `
+      <section class="design-modal-section design-modal-section--impact">
+        <h4 class="design-modal-heading">Performance Outcome</h4>
+        <p class="design-modal-text">
+          <strong>Why it worked:</strong> Layouts engineered for A/B testing — high contrast, mobile-first legibility, and emotional focal points. Winning variants targeted a <strong>[XX% CTR lift]</strong> in feed tests against baseline thumbnails.
+        </p>
+      </section>
       <section class="design-modal-section">
         <h4 class="design-modal-heading">Project Overview</h4>
         <p class="design-modal-text">
@@ -1168,7 +1198,7 @@ const escShowcases = {
       {
         id: "workshops",
         title: "Track 1: Proprietary Workshops &amp; Project Delivery",
-        images: buildPhotoGalleryImages(ESC_WORKSHOPS_BASE, 15),
+        images: buildEscWorkshopGalleryImages(),
         bodyHtml: `
           <ul class="design-modal-list">
             <li>
@@ -2091,7 +2121,7 @@ const filterFunc = function (selectedValue) {
 }
 
 // add event in all filter button items for large screen
-let lastClickedBtn = filterBtn[0];
+let lastClickedBtn = document.querySelector('[data-filter-btn="creative-strategist"]') || filterBtn[0];
 
 for (let i = 0; i < filterBtn.length; i++) {
 
@@ -2107,6 +2137,11 @@ for (let i = 0; i < filterBtn.length; i++) {
 
   });
 
+}
+
+filterFunc("creative-strategist");
+if (selectValue) {
+  selectValue.innerText = "Strategy & Performance";
 }
 
 
@@ -2370,6 +2405,45 @@ initAuthorBooks();
 const navigationLinks = document.querySelectorAll("[data-nav-link]");
 const pages = document.querySelectorAll("[data-page]");
 
+const activateNavPage = function (pageName) {
+  for (let i = 0; i < pages.length; i++) {
+    const isMatch = pages[i].dataset.page === pageName;
+    pages[i].classList.toggle("active", isMatch);
+  }
+
+  for (let i = 0; i < navigationLinks.length; i++) {
+    const linkPage = navigationLinks[i].innerHTML.trim().toLowerCase();
+    navigationLinks[i].classList.toggle("active", linkPage === pageName);
+  }
+
+  window.scrollTo(0, 0);
+};
+
+const activatePortfolioFilter = function (filterValue, filterLabel) {
+  if (!filterValue || typeof filterFunc !== "function") { return; }
+
+  if (selectValue && filterLabel) {
+    selectValue.innerText = filterLabel;
+  }
+
+  for (let i = 0; i < filterBtn.length; i++) {
+    const btnValue = filterBtn[i].dataset.filterBtn;
+    const isActive = btnValue === filterValue;
+
+    filterBtn[i].classList.toggle("active", isActive);
+
+    if (isActive && typeof lastClickedBtn !== "undefined") {
+      if (lastClickedBtn && lastClickedBtn !== filterBtn[i]) {
+        lastClickedBtn.classList.remove("active");
+      }
+
+      lastClickedBtn = filterBtn[i];
+    }
+  }
+
+  filterFunc(filterValue);
+};
+
 // add event to all nav link
 for (let i = 0; i < navigationLinks.length; i++) {
   navigationLinks[i].addEventListener("click", function () {
@@ -2385,5 +2459,20 @@ for (let i = 0; i < navigationLinks.length; i++) {
       }
     }
 
+  });
+}
+
+const heroCtaButtons = document.querySelectorAll("[data-hero-cta]");
+
+for (let i = 0; i < heroCtaButtons.length; i++) {
+  heroCtaButtons[i].addEventListener("click", function () {
+    const target = this.dataset.heroCta;
+
+    if (target === "case-studies") {
+      activateNavPage("portfolio");
+      activatePortfolioFilter("creative-strategist", "Strategy & Performance");
+    } else if (target === "contact") {
+      activateNavPage("contact");
+    }
   });
 }
