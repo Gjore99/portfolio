@@ -737,7 +737,9 @@ main {
   position: absolute;
   top: 15px;
   right: 15px;
+  z-index: 20;
   background: var(--onyx);
+  border: none;
   border-radius: 8px;
   width: 32px;
   height: 32px;
@@ -747,12 +749,18 @@ main {
   color: var(--white-2);
   font-size: 18px;
   opacity: 0.7;
+  cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .modal-close-btn:hover,
 .modal-close-btn:focus { opacity: 1; }
 
-.modal-close-btn ion-icon { --ionicon-stroke-width: 50px; }
+.modal-close-btn ion-icon {
+  --ionicon-stroke-width: 50px;
+  pointer-events: none;
+}
 
 .modal-avatar-box {
   background: var(--bg-gradient-onyx);
@@ -3833,5 +3841,14 @@ textarea.form-input::-webkit-resizer { display: none; }
   .credential-modal--design .design-gallery-img,
   .credential-modal--app .design-gallery-img {
     max-height: min(58vh, 520px) !important;
+  }
+
+  /* Testimonials close — sit above full-width modal-img-wrapper on touch devices */
+  .testimonials-modal .modal-close-btn {
+    z-index: 30;
+    min-width: 44px;
+    min-height: 44px;
+    top: 12px;
+    right: 12px;
   }
 }

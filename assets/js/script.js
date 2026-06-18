@@ -34,6 +34,18 @@ const testimonialsModalFunc = function () {
   overlay.classList.toggle("active");
 }
 
+const closeTestimonialsModal = function (event) {
+  if (event) {
+    event.preventDefault();
+    event.stopPropagation();
+  }
+
+  if (!modalContainer || !modalContainer.classList.contains("active")) { return; }
+
+  modalContainer.classList.remove("active");
+  overlay.classList.remove("active");
+}
+
 // add click event to all modal items
 for (let i = 0; i < testimonialsItem.length; i++) {
 
@@ -54,9 +66,27 @@ for (let i = 0; i < testimonialsItem.length; i++) {
 
 }
 
-// add click event to modal close button
-modalCloseBtn.addEventListener("click", testimonialsModalFunc);
-overlay.addEventListener("click", testimonialsModalFunc);
+// add click event to modal close button (touch-friendly for mobile)
+if (modalCloseBtn) {
+  let closeViaTouch = false;
+
+  modalCloseBtn.addEventListener("touchend", function (event) {
+    closeViaTouch = true;
+    closeTestimonialsModal(event);
+  });
+
+  modalCloseBtn.addEventListener("click", function (event) {
+    if (closeViaTouch) {
+      closeViaTouch = false;
+      return;
+    }
+
+    closeTestimonialsModal(event);
+  });
+}
+if (overlay) {
+  overlay.addEventListener("click", closeTestimonialsModal);
+}
 
 
 
