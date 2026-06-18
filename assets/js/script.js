@@ -1667,6 +1667,8 @@ const CS_UGC_MAX_LOADING = 4;
 const CS_UGC_MAX_PLAYING = 4;
 const CS_UGC_MARQUEE_DURATION = 110;
 const CS_UGC_PRELOAD_SECONDS = 1.5;
+const CS_UGC_VISIBLE_LOAD_PRIORITY = 2500;
+const CS_UGC_APPROACH_LOAD_PRIORITY = 900;
 const CS_UGC_SYNC_MS = 160;
 
 const getCsUgcVideoSrc = function (index) {
@@ -1790,11 +1792,13 @@ const startUgcVideoLoad = function (video) {
   const onReady = function () {
     video.removeEventListener("loadeddata", onReady);
     video.removeEventListener("canplay", onReady);
+    video.removeEventListener("canplaythrough", onReady);
     markUgcVideoReady(video);
   };
 
   video.addEventListener("loadeddata", onReady);
   video.addEventListener("canplay", onReady);
+  video.addEventListener("canplaythrough", onReady);
   video.preload = "auto";
   video.src = source;
 
@@ -1805,12 +1809,16 @@ const startUgcVideoLoad = function (video) {
 
 const processUgcLoadQueue = function () {
   const limits = getCsUgcLimits();
+  const hasVisibleWaiting = csUgcLoadQueue.some(function (item) {
+    return item.priority >= CS_UGC_VISIBLE_LOAD_PRIORITY;
+  });
+  const loadLimit = hasVisibleWaiting ? limits.maxLoading + 1 : limits.maxLoading;
 
   csUgcLoadQueue.sort(function (a, b) {
     return b.priority - a.priority;
   });
 
-  while (csUgcActiveLoads < limits.maxLoading && csUgcLoadQueue.length) {
+  while (csUgcActiveLoads < loadLimit && csUgcLoadQueue.length) {
     const item = csUgcLoadQueue.shift();
 
     if (!item || !item.video || !item.video.isConnected) { continue; }
@@ -1820,6 +1828,11 @@ const processUgcLoadQueue = function () {
       continue;
     }
 
+    if (hasVisibleWaiting && item.priority < CS_UGC_VISIBLE_LOAD_PRIORITY && csUgcActiveLoads >= limits.maxLoading) {
+      csUgcLoadQueue.unshift(item);
+      break;
+    }
+
     startUgcVideoLoad(item.video);
   }
 };
@@ -1827,10 +1840,12 @@ const processUgcLoadQueue = function () {
 const requestUgcVideoLoad = function (video, priority) {
   if (!video || video.getAttribute("src") || video.dataset.ugcLoading === "true") { return; }
 
+  const nextPriority = Math.max(priority, 1);
+
   if (video.dataset.ugcQueued === "true") {
     for (let i = 0; i < csUgcLoadQueue.length; i++) {
       if (csUgcLoadQueue[i].video === video) {
-        csUgcLoadQueue[i].priority = Math.max(csUgcLoadQueue[i].priority, priority);
+        csUgcLoadQueue[i].priority = Math.max(csUgcLoadQueue[i].priority, nextPriority);
         break;
       }
     }
@@ -1840,8 +1855,12 @@ const requestUgcVideoLoad = function (video, priority) {
   }
 
   video.dataset.ugcQueued = "true";
-  csUgcLoadQueue.push({ video: video, priority: priority });
+  csUgcLoadQueue.push({ video: video, priority: nextPriority });
   processUgcLoadQueue();
+};
+
+const requestVisibleUgcVideoLoad = function (video, visibleWidth) {
+  requestUgcVideoLoad(video, CS_UGC_VISIBLE_LOAD_PRIORITY + Math.max(visibleWidth, 1));
 };
 
 const ensureCreativeStrategistVideoSource = function (video) {
@@ -1867,7 +1886,7 @@ const playCreativeStrategistVideo = function (video) {
   video.dataset.wantsPlay = "true";
 
   if (!video.getAttribute("src")) {
-    requestUgcVideoLoad(video, 850);
+    requestUgcVideoLoad(video, CS_UGC_VISIBLE_LOAD_PRIORITY);
     return;
   }
 
@@ -1991,11 +2010,22 @@ const getMarqueeFrameLoadScore = function (rect, viewportRight, preloadLeadPx) {
     return 880 + Math.floor(closeness * 140);
   }
 
-  if (rect.right > 0 && rect.right <= frameWidth * 0.75) {
-    return 120 + rect.right;
+  if (rect.right > 0 && rect.right <= frameWidth * 0.75 && rect.left < 0) {
+    return 0;
   }
 
   return 0;
+};
+
+const isMarqueeFrameVisible = function (rect, viewportRight) {
+  return rect.left < viewportRight && rect.right > 0;
+};
+
+const getMarqueeVisibleWidth = function (rect, viewportRight) {
+  const visibleLeft = Math.max(rect.left, 0);
+  const visibleRight = Math.min(rect.right, viewportRight);
+
+  return Math.max(visibleRight - visibleLeft, 0);
 };
 
 const isMarqueeFrameApproaching = function (rect, viewportRight, preloadLeadPx) {
@@ -2025,7 +2055,7 @@ const primeInitialUgcFrames = function (frames) {
   });
 
   for (let i = 0; i < candidates.length && i < limits.maxPlaying; i++) {
-    requestUgcVideoLoad(candidates[i].video, 950 - i);
+    requestVisibleUgcVideoLoad(candidates[i].video, candidates[i].score);
     playCreativeStrategistVideo(candidates[i].video);
   }
 
@@ -2049,7 +2079,7 @@ const primeInitialUgcFrames = function (frames) {
   }
 
   if (bestApproach) {
-    requestUgcVideoLoad(bestApproach.video, Math.max(bestApproach.score, 930));
+    requestUgcVideoLoad(bestApproach.video, CS_UGC_APPROACH_LOAD_PRIORITY + 40);
     bestApproach.video.dataset.wantsPlay = "true";
   }
 };
@@ -2121,10 +2151,7 @@ const syncUgcMarqueePlayback = function () {
   const metrics = getUgcMarqueeMetrics(track);
   const viewportRight = window.innerWidth;
   const preloadLeadPx = metrics.preloadLeadPx;
-  const limits = getCsUgcLimits();
-  const loadCandidates = [];
   const approachCandidates = [];
-  const playCandidates = [];
 
   if (marqueeRoot.dataset.initialPrimed !== "true") {
     primeInitialUgcFrames(frames);
@@ -2135,8 +2162,8 @@ const syncUgcMarqueePlayback = function () {
     const video = frames[i].querySelector("video");
     const rect = frames[i].getBoundingClientRect();
     const frameWidth = rect.width || 200;
-    const loadScore = getMarqueeFrameLoadScore(rect, viewportRight, preloadLeadPx);
-    const isVisible = rect.left < viewportRight && rect.right > 0;
+    const isVisible = isMarqueeFrameVisible(rect, viewportRight);
+    const visibleWidth = getMarqueeVisibleWidth(rect, viewportRight);
     const isApproaching = isMarqueeFrameApproaching(rect, viewportRight, preloadLeadPx);
     const shouldUnload = rect.right < -(frameWidth * 2) || rect.left > window.innerWidth + preloadLeadPx * 1.5;
 
@@ -2147,37 +2174,31 @@ const syncUgcMarqueePlayback = function () {
       continue;
     }
 
-    if (loadScore > 0) {
-      const entry = { video: video, score: loadScore };
-
-      if (isApproaching) {
-        approachCandidates.push(entry);
-      } else {
-        loadCandidates.push(entry);
-      }
-    }
-
     if (isVisible) {
-      const visibleLeft = Math.max(rect.left, 0);
-      const visibleRight = Math.min(rect.right, viewportRight);
-      const visibleWidth = Math.max(visibleRight - visibleLeft, 0);
-      const centerDistance = Math.abs((rect.left + rect.right) / 2 - viewportRight / 2);
+      video.dataset.wantsPlay = "true";
 
-      playCandidates.push({
-        video: video,
-        score: visibleWidth * 1000 - centerDistance * 0.15
-      });
+      if (!video.getAttribute("src")) {
+        requestVisibleUgcVideoLoad(video, visibleWidth);
+      } else if (video.dataset.ugcLoading !== "true") {
+        playCreativeStrategistVideo(video);
+      }
     } else if (isApproaching) {
-      playCandidates.push({
+      const distance = rect.left - viewportRight;
+      const closeness = 1 - (distance / preloadLeadPx);
+
+      approachCandidates.push({
         video: video,
-        score: loadScore
+        score: closeness
       });
       video.dataset.wantsPlay = "true";
-    } else if (loadScore > 100 && video.getAttribute("src") && video.dataset.ugcLoading !== "true") {
-      playCandidates.push({
-        video: video,
-        score: loadScore
-      });
+
+      if (!video.getAttribute("src")) {
+        requestUgcVideoLoad(video, CS_UGC_APPROACH_LOAD_PRIORITY + Math.floor(closeness * 80));
+      } else if (video.dataset.ugcLoading !== "true") {
+        playCreativeStrategistVideo(video);
+      }
+    } else {
+      pauseCreativeStrategistVideo(video);
     }
   }
 
@@ -2185,27 +2206,12 @@ const syncUgcMarqueePlayback = function () {
     return b.score - a.score;
   });
 
-  loadCandidates.sort(function (a, b) {
-    return b.score - a.score;
-  });
+  for (let i = 0; i < approachCandidates.length && i < 1; i++) {
+    const video = approachCandidates[i].video;
 
-  for (let i = 0; i < approachCandidates.length && i < 2; i++) {
-    requestUgcVideoLoad(approachCandidates[i].video, Math.max(approachCandidates[i].score, 940 - i));
-  }
-
-  for (let i = 0; i < loadCandidates.length; i++) {
-    requestUgcVideoLoad(loadCandidates[i].video, loadCandidates[i].score);
-  }
-
-  playCandidates.sort(function (a, b) {
-    return b.score - a.score;
-  });
-
-  for (let i = 0; i < playCandidates.length; i++) {
-    if (i < limits.maxPlaying) {
-      playCreativeStrategistVideo(playCandidates[i].video);
-    } else {
-      pauseCreativeStrategistVideo(playCandidates[i].video);
+    if (!video.getAttribute("src")) {
+      requestUgcVideoLoad(video, CS_UGC_APPROACH_LOAD_PRIORITY + 60);
+      video.dataset.wantsPlay = "true";
     }
   }
 };
