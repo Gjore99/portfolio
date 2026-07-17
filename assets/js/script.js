@@ -492,7 +492,7 @@ const designShowcases = {
       <section class="design-modal-section design-modal-section--impact">
         <h4 class="design-modal-heading">Performance Outcome</h4>
         <p class="design-modal-text">
-          <strong>Why it worked:</strong> Layouts engineered for A/B testing — high contrast, mobile-first legibility, and emotional focal points. Winning variants targeted a <strong>[XX% CTR lift]</strong> in feed tests against baseline thumbnails.
+          <strong>Why it worked:</strong> Layouts engineered for A/B testing — high contrast, mobile-first legibility, and emotional focal points. Winning variants were built to lift click-through rate against baseline thumbnails in live feed tests.
         </p>
       </section>
       <section class="design-modal-section">
@@ -534,25 +534,25 @@ const ERASMUS_DRIVE_FOLDER =
 const erasmusCertificates = [
   {
     id: "ai-sustainibility",
-    title: "AI & Sustainibilty",
+    title: "AI & Sustainability",
     fileId: "1wPcQmu6Ppc3jm0g7YavAZgs3Wm-6hL9i",
     slug: "ai-sustainibility"
   },
   {
     id: "cyberkindnes",
-    title: "Cyberkindnes",
+    title: "Cyberkindness",
     fileId: "1dhT71_HwBZEGbvJT1p7_5YiJkQC0vQoi",
     slug: "cyberkindnes"
   },
   {
     id: "holistic-education",
-    title: "Holistic Education and Role-Playng for Affective and Relational Trening",
+    title: "Holistic Education and Role-Playing for Affective and Relational Training",
     fileId: "1d7qu6VM2QzAVZauC8ohhGojhEut_nGEo",
     slug: "holistic-education"
   },
   {
     id: "professional-development",
-    title: "Profesional Development Activity",
+    title: "Professional Development Activity",
     fileId: "1ObzwJX20zVRRqjoBw-7RAm6wsJIBrxjd",
     slug: "professional-development"
   },
@@ -564,7 +564,7 @@ const erasmusCertificates = [
   },
   {
     id: "techno-entrepreneurs",
-    title: "Techno-Entreprenuers in Action",
+    title: "Techno-Entrepreneurs in Action",
     fileId: "1EtqKtWVox184eQ-XRhF9baVp_zy9U4dp",
     slug: "techno-entrepreneurs"
   },
@@ -668,6 +668,35 @@ const showMediaFallback = function (imgElement) {
   }
 };
 
+// Load the heic2any library on demand (only when a HEIC photo is opened),
+// so the 324KB script no longer blocks every page load.
+const HEIC2ANY_SRC = "https://cdn.jsdelivr.net/npm/heic2any@0.0.4/dist/heic2any.min.js";
+let heic2anyLoaderPromise = null;
+
+const ensureHeic2any = function () {
+  if (typeof heic2any !== "undefined") {
+    return Promise.resolve();
+  }
+
+  if (heic2anyLoaderPromise) {
+    return heic2anyLoaderPromise;
+  }
+
+  heic2anyLoaderPromise = new Promise(function (resolve, reject) {
+    const script = document.createElement("script");
+    script.src = HEIC2ANY_SRC;
+    script.async = true;
+    script.onload = function () { resolve(); };
+    script.onerror = function () {
+      heic2anyLoaderPromise = null;
+      reject(new Error("Unable to load heic2any"));
+    };
+    document.head.appendChild(script);
+  });
+
+  return heic2anyLoaderPromise;
+};
+
 const convertHeicBlob = async function (src) {
   const response = await fetch(src);
 
@@ -681,6 +710,8 @@ const convertHeicBlob = async function (src) {
     { toType: "image/jpeg", quality: 0.72, multiple: false },
     { toType: "image/png", multiple: true }
   ];
+
+  await ensureHeic2any();
 
   if (typeof heic2any === "undefined") {
     throw new Error("heic2any is unavailable");
@@ -2688,6 +2719,36 @@ initAuthorBooks();
 
 
 
+// mobile hamburger navbar toggle
+const navbar = document.querySelector("[data-navbar]");
+const navToggleBtn = document.querySelector("[data-nav-toggle]");
+
+const closeNavbar = function () {
+  if (!navbar) { return; }
+  navbar.classList.remove("active");
+  if (navToggleBtn) { navToggleBtn.setAttribute("aria-expanded", "false"); }
+};
+
+if (navToggleBtn && navbar) {
+  navToggleBtn.addEventListener("click", function (event) {
+    event.stopPropagation();
+    const isOpen = navbar.classList.toggle("active");
+    navToggleBtn.setAttribute("aria-expanded", isOpen ? "true" : "false");
+  });
+
+  // close the dropdown when clicking anywhere outside the navbar
+  document.addEventListener("click", function (event) {
+    if (!navbar.classList.contains("active")) { return; }
+    if (navbar.contains(event.target)) { return; }
+    closeNavbar();
+  });
+
+  // close on Escape
+  document.addEventListener("keydown", function (event) {
+    if (event.key === "Escape") { closeNavbar(); }
+  });
+}
+
 // page navigation variables
 const navigationLinks = document.querySelectorAll("[data-nav-link]");
 const pages = document.querySelectorAll("[data-page]");
@@ -2704,6 +2765,7 @@ const activateNavPage = function (pageName) {
   }
 
   window.scrollTo(0, 0);
+  closeNavbar();
   syncCreativeStrategistMediaState();
 };
 
@@ -2747,6 +2809,7 @@ for (let i = 0; i < navigationLinks.length; i++) {
       }
     }
 
+    closeNavbar();
     syncCreativeStrategistMediaState();
 
   });
